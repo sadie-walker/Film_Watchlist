@@ -1,0 +1,58 @@
+body {
+	background-color: #454851;
+}
+
+main {
+	display: flex;
+}
+
+ul {
+	padding: 0;
+}
+
+/* Watchlist Section */
+.watchlist img {
+	height: 80px;
+}
+
+.add-films-btns button:first-of-type {
+	color: #9d8df1;
+	border: 1px solid #9d8df1;
+	font-weight: 500;
+}
+.add-films-btns button:first-of-type:hover {
+	background-color: #9d8df1;
+	color: #fff;
+}
+
+.add-films-btns button:last-of-type {
+	color: #1cfeba;
+	border: 1px solid #1cfeba;
+	font-weight: 500;
+}
+.add-films-btns button:last-of-type:hover {
+	background-color: #1cfeba;
+	color: #454851;
+}
+
+/* Film Search Section */
+.film-search {
+	display: none;
+}
+
+.film-search .movie-info {
+	display: none;
+	/* display: flex; */
+}
+
+.film-search .movie-info img {
+	width: 200px;
+	height: 300px;
+}
+
+.film-search .film-search-add-btn {
+	background-color: #9d8df1;
+	color: #fff;
+	width: fit-content;
+	margin-left: 8px;
+}
