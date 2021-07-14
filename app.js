@@ -15,14 +15,41 @@ const APICtrl = (() => {
 
 })();
 
+const StorageCtrl = (() => {
+    
+    const getWatchlistFromLocalStorage = () => {
+        let watchlist;        
+
+        if(localStorage.getItem("watchlist") === null){
+            watchlist = [];
+        } else {
+            watchlist = JSON.parse(localStorage.getItem("watchlist"));;
+        }
+        return watchlist;
+    }
+
+    const addFilmToLocalStorage = (film) => {
+        let watchlist = StorageCtrl.getWatchlistFromLocalStorage();
+        watchlist.push(film);
+        localStorage.setItem("watchlist", JSON.stringify(watchlist));
+    }
+
+    return {
+        addFilmToLocalStorage,
+        getWatchlistFromLocalStorage
+    }
+})();
+
 const UICtrl = (() => {
     const UISelectors = {
         watchlist: {
             watchlist: "watchlist",
             watchlistTable: "watchlist-table",
+            watchlistTableBody: "#watchlist-table tbody",
         },
         filmSearch: {
             searchFilmBtn: "search-film-btn",
+            filmSearchAddBtn: "film-search-add-btn",
             filmSearch: "film-search",
             movieInfo: "movie-info",
             movieInput: "movie-input",
@@ -34,6 +61,23 @@ const UICtrl = (() => {
 
     const getSelectors = () => {
         return UISelectors;
+    }
+
+    const populateWatchlist = () => {
+        const table = document.querySelector(UISelectors.watchlist.watchlistTableBody);
+        const watchlist = StorageCtrl.getWatchlistFromLocalStorage();
+        table.innerHTML = "";
+        watchlist.forEach(film => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+            <td><input type="checkbox"></td>
+            <td class="text-nowrap">${film.title}</td>
+            <td class="watchlist-desc">${film.desc}</td>
+            <td><img src="${film.img}"</td>
+            `
+            // <td>${film.location}</td>
+            table.appendChild(tr);
+        })
     }
 
     const openFilmSearch = () => {
@@ -60,6 +104,15 @@ const UICtrl = (() => {
         watchlist.firstElementChild.remove();
     }
 
+    const getFilmSearchResults = () => {
+        const film = {
+            title: document.getElementById(UISelectors.filmSearch.movieInfoTitle).innerText,
+            desc: document.getElementById(UISelectors.filmSearch.movieInfoDesc).innerText,
+            img: document.getElementById(UISelectors.filmSearch.movieInfoImg).getAttribute("src"),
+        }
+        return film;
+    }
+
     const showFilm = (movie) => {
         document.getElementById(UISelectors.filmSearch.movieInfo).style.display = "flex";
 
@@ -80,7 +133,9 @@ const UICtrl = (() => {
 
     return {
         getSelectors,
+        populateWatchlist,
         openFilmSearch,
+        getFilmSearchResults,
         closeSearches,
         showFilm
     }
@@ -93,6 +148,9 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
 
         // Open film search
         document.getElementById(UISelectors.filmSearch.searchFilmBtn).addEventListener("click", searchFilmClick);
+
+        // add searched film
+        document.getElementById(UISelectors.filmSearch.filmSearchAddBtn).addEventListener("click", searchFilmAddClick);
 
         // // Close film search
         document.getElementById(UISelectors.watchlist.watchlist).addEventListener("click", backClick);
@@ -115,6 +173,12 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         });
     }
 
+    const searchFilmAddClick = () => {
+        const film = UICtrl.getFilmSearchResults();
+        StorageCtrl.addFilmToLocalStorage(film);
+        UICtrl.populateWatchlist();
+    }
+
     const backClick = (e) => {
         if(e.target.id === "back-btn"){
             UICtrl.closeSearches();
@@ -125,6 +189,9 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
     const init = () => {
         // Load event listeners
         loadEventListeners();
+
+        // Load watchlist from local storage
+        UICtrl.populateWatchlist();
     }
 
     return {
