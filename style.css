@@ -56,3 +56,24 @@ ul {
 	width: fit-content;
 	margin-left: 8px;
 }
+/* DOM Styles */
+.list-aside {
+	width: 50%;
+}
+
+.list-aside .add-films-btns {
+	display: none;
+}
+
+.list-aside thead th:nth-of-type(n + 3),
+.list-aside tbody td:nth-of-type(n + 3) {
+	display: none;
+}
+
+.movie-info-year {
+	margin-left: 10px;
+	font-style: italic;
+	font-weight: 400;
+	color: grey;
+	font-size: 16px;
+}
