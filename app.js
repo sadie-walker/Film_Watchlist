@@ -2,13 +2,21 @@ const APICtrl = (() => {
     const apiKey = "8ed514450ca5d54b5bc425d6d68cc9f8";
 
 
-    async function getMovieData(movie) {
-        const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${movie}`);
+    async function getMovieData(title) {
+        const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${title}`);
         const data = await res.json();
-        getMovieLocation(data);
-        return data;
+        let movie = data.results[0];
+        return movie;
     }
 
+    async function getMovieLocation(movie) {
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/watch/providers?api_key=${apiKey}`);
+        const data = await res.json();
+        const location = data.results.GB;
+        movie.location = location
+        console.log(movie);
+        return movie;
+    }
 
     async function getCinemaFilms() {
         const res = await fetch(`https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}&region=GB`);
@@ -17,8 +25,9 @@ const APICtrl = (() => {
     }
 
     return {
-        getCinemaFilms,
-        getMovieData
+        getMovieData,
+        getMovieLocation,
+        getCinemaFilms
     }
 
 })();
@@ -64,6 +73,7 @@ const UICtrl = (() => {
             movieInfoTitle: "movie-info-title",
             movieInfoDesc: "movie-info-desc",
             movieInfoImg: "movie-info-img",
+            movieInfoLocation: "movie-info-location",
         },
         cinemaFilms: {
             cinemaReleasesBtn: "cinema-releases-btn",
@@ -83,12 +93,12 @@ const UICtrl = (() => {
         watchlist.forEach(film => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
-            <td><input type="checkbox"></td>
-            <td class="text-nowrap">${film.title}</td>
-            <td class="watchlist-desc">${film.desc}</td>
-            <td><img src="${film.img}"</td>
+                <td><input type="checkbox"></td>
+                <td class="text-nowrap">${film.title}</td>
+                <td class="watchlist-desc">${film.desc}</td>
+                <td><img src="${film.img}"</td>
+                <td>${film.location}</td>
             `
-            // <td>${film.location}</td>
             table.appendChild(tr);
         })
     }
@@ -122,6 +132,7 @@ const UICtrl = (() => {
             title: document.getElementById(UISelectors.filmSearch.movieInfoTitle).innerText,
             desc: document.getElementById(UISelectors.filmSearch.movieInfoDesc).innerText,
             img: document.getElementById(UISelectors.filmSearch.movieInfoImg).getAttribute("src"),
+            location: document.getElementById(UISelectors.filmSearch.movieInfoLocation).innerText
         }
         return film;
     }
@@ -132,13 +143,18 @@ const UICtrl = (() => {
         const title = document.getElementById(UISelectors.filmSearch.movieInfoTitle);
         const desc = document.getElementById(UISelectors.filmSearch.movieInfoDesc);
         const img = document.getElementById(UISelectors.filmSearch.movieInfoImg);
+        const location = document.getElementById(UISelectors.filmSearch.movieInfoLocation);
 
-        title.innerText = movie.results[0].original_title;
-        desc.innerText = movie.results[0].overview;
-        img.setAttribute("src", `https://image.tmdb.org/t/p/original/${movie.results[0].poster_path}`);
+        title.innerText = movie.original_title;
+        desc.innerText = movie.overview;
+        img.setAttribute("src", `https://image.tmdb.org/t/p/original/${movie.poster_path}`);
+        location.innerHTML ="";
+        movie.location.flatrate.forEach(provider => {
+            location.innerHTML += `<li>${provider.provider_name}</li>`
+        })
 
         const yearEl = document.createElement("em");
-        const date = new Date(movie.results[0].release_date);
+        const date = new Date(movie.release_date);
         yearEl.innerText = `(${date.getFullYear()})`;
         yearEl.classList.add("movie-info-year");
         title.appendChild(yearEl);
@@ -223,7 +239,10 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         const movieQuery = movieSearch.replace(" ", "+");
         APICtrl.getMovieData(movieQuery)
         .then(data => {
-            UICtrl.showFilm(data);
+            APICtrl.getMovieLocation(data)
+            .then(data => {
+                UICtrl.showFilm(data);
+            })
         });
     }
 
