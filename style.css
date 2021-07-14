@@ -56,6 +56,20 @@ ul {
 	width: fit-content;
 	margin-left: 8px;
 }
+
+/* Cinema Listing Section*/
+.cinema-films {
+	display: none;
+}
+
+.cinema-films li {
+	width: 150px;
+}
+
+.cinema-films img {
+	width: 100%;
+}
+
 /* DOM Styles */
 .list-aside {
 	width: 50%;
