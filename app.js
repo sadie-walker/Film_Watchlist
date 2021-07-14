@@ -9,7 +9,15 @@ const APICtrl = (() => {
         return data;
     }
 
+
+    async function getCinemaFilms() {
+        const res = await fetch(`https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}&region=GB`);
+        const data = await res.json();
+        return data;
+    }
+
     return {
+        getCinemaFilms,
         getMovieData
     }
 
@@ -57,6 +65,11 @@ const UICtrl = (() => {
             movieInfoDesc: "movie-info-desc",
             movieInfoImg: "movie-info-img",
         },
+        cinemaFilms: {
+            cinemaReleasesBtn: "cinema-releases-btn",
+            cinemaFilms: "cinema-films",
+            cinemaFilmsList: "cinema-films-list"
+        }
     }
 
     const getSelectors = () => {
@@ -131,12 +144,50 @@ const UICtrl = (() => {
         title.appendChild(yearEl);
     }
 
+    const openCinemaReleases = () => {
+        const cinemaFilms = document.getElementById(UISelectors.cinemaFilms.cinemaFilms)
+        const watchlist = document.getElementById(UISelectors.watchlist.watchlist);
+        const watchlistTable = document.getElementById(UISelectors.watchlist.watchlistTable);
+        const backBtn = document.createElement("button");
+        cinemaFilms.style.display = "block";
+        watchlist.classList.add("list-aside");
+
+        backBtn.innerText = "<- Back to watchlist";
+        backBtn.classList = "btn text-light";
+        backBtn.id = "back-btn";
+        watchlist.insertBefore(backBtn, watchlistTable);
+    }
+
+    const showCinemaFilms = (films) => {
+        const list = document.getElementById(UISelectors.cinemaFilms.cinemaFilmsList);
+        let ul = document.createElement("ul");
+        list.innerHTML = "";
+        ul.classList = "row list-unstyled";
+
+        films.results.forEach((film, index) => {
+            if(index !== 0 && index % 4 === 0){
+                list.appendChild(ul);
+                ul = document.createElement("ul");
+                ul.classList = "row list-unstyled ";
+            }                 
+                const li =  document.createElement("li");
+                li.classList = "col mb-4";
+                li.innerHTML = `
+                    <img src="https://image.tmdb.org/t/p/original/${film.poster_path}">
+                    <caption>${film.original_title}</caption>
+                `
+                ul.appendChild(li)
+        })
+    }
+
     return {
         getSelectors,
         populateWatchlist,
         openFilmSearch,
         getFilmSearchResults,
         closeSearches,
+        showCinemaFilms,
+        openCinemaReleases,
         showFilm
     }
 })();
@@ -157,6 +208,9 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         
         // // Movie input event
         document.getElementById(UISelectors.filmSearch.movieInput).addEventListener("keyup", inputMovieKeyup);
+        
+        // // Open cinema release
+        document.getElementById(UISelectors.cinemaFilms.cinemaReleasesBtn).addEventListener("click", cinemaReleasesClick);
     }
 
     // Film Search
@@ -183,6 +237,15 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         if(e.target.id === "back-btn"){
             UICtrl.closeSearches();
         }
+    }
+
+    // Cinema Releases
+    const cinemaReleasesClick = () => {
+        UICtrl.openCinemaReleases();
+        APICtrl.getCinemaFilms()
+            .then(data => {
+                UICtrl.showCinemaFilms(data);
+            })
     }
 
     // Initialisation
