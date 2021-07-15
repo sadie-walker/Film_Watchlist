@@ -12,9 +12,16 @@ const APICtrl = (() => {
     async function getMovieLocation(movie) {
         const res = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/watch/providers?api_key=${apiKey}`);
         const data = await res.json();
-        const location = data.results.GB;
-        movie.location = location
-        console.log(movie);
+        const locations = data.results.GB;
+        movie.location = "";
+
+        locations.flatrate.forEach((provider, index) => {
+            movie.location += `${provider.provider_name} `;
+
+            if(index < locations.flatrate.length-1){
+                movie.location += ", ";
+            }
+        })
         return movie;
     }
 
@@ -77,6 +84,7 @@ const UICtrl = (() => {
         },
         cinemaFilms: {
             cinemaReleasesBtn: "cinema-releases-btn",
+            cinemaAddBtn: ".cinema-add-btn",
             cinemaFilms: "cinema-films",
             cinemaFilmsList: "cinema-films-list"
         }
@@ -94,9 +102,9 @@ const UICtrl = (() => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td><input type="checkbox"></td>
-                <td class="text-nowrap">${film.title}</td>
-                <td class="watchlist-desc">${film.desc}</td>
-                <td><img src="${film.img}"</td>
+                <td class="text-nowrap">${film.title} (${new Date(film.release_date).getFullYear()})</td>
+                <td class="watchlist-desc">${film.overview}</td>
+                <td><img src="https://image.tmdb.org/t/p/original/${film.poster_path}"</td>
                 <td>${film.location}</td>
             `
             table.appendChild(tr);
@@ -127,16 +135,6 @@ const UICtrl = (() => {
         watchlist.firstElementChild.remove();
     }
 
-    const getFilmSearchResults = () => {
-        const film = {
-            title: document.getElementById(UISelectors.filmSearch.movieInfoTitle).innerText,
-            desc: document.getElementById(UISelectors.filmSearch.movieInfoDesc).innerText,
-            img: document.getElementById(UISelectors.filmSearch.movieInfoImg).getAttribute("src"),
-            location: document.getElementById(UISelectors.filmSearch.movieInfoLocation).innerText
-        }
-        return film;
-    }
-
     const showFilm = (movie) => {
         document.getElementById(UISelectors.filmSearch.movieInfo).style.display = "flex";
 
@@ -148,10 +146,7 @@ const UICtrl = (() => {
         title.innerText = movie.original_title;
         desc.innerText = movie.overview;
         img.setAttribute("src", `https://image.tmdb.org/t/p/original/${movie.poster_path}`);
-        location.innerHTML ="";
-        movie.location.flatrate.forEach(provider => {
-            location.innerHTML += `<li>${provider.provider_name}</li>`
-        })
+        location.innerText = movie.location;
 
         const yearEl = document.createElement("em");
         const date = new Date(movie.release_date);
@@ -176,31 +171,33 @@ const UICtrl = (() => {
 
     const showCinemaFilms = (films) => {
         const list = document.getElementById(UISelectors.cinemaFilms.cinemaFilmsList);
-        let ul = document.createElement("ul");
         list.innerHTML = "";
-        ul.classList = "row list-unstyled";
 
-        films.results.forEach((film, index) => {
-            if(index !== 0 && index % 4 === 0){
-                list.appendChild(ul);
-                ul = document.createElement("ul");
-                ul.classList = "row list-unstyled ";
-            }                 
-                const li =  document.createElement("li");
-                li.classList = "col mb-4";
-                li.innerHTML = `
-                    <img src="https://image.tmdb.org/t/p/original/${film.poster_path}">
-                    <caption>${film.original_title}</caption>
-                `
-                ul.appendChild(li)
+        let ul = document.createElement("ul");
+        ul.classList = "list-unstyled d-flex flex-wrap";
+
+        films.results.forEach(film => {
+            const li =  document.createElement("li");
+            li.classList = "card mb-4 mx-2";
+            li.innerHTML = `
+                <img src="https://image.tmdb.org/t/p/original/${film.poster_path}" class="card-img-top">
+                <div class="card-body d-flex flex-column align-items-center justify-content-between">
+                    <h3 class="card-title text-dark">${film.original_title}</h3>
+                    <div>
+                        <button class="btn btn-primary">Details</button>
+                        <button class="btn btn-primary cinema-add-btn">Add to Watchlist</button>
+                    </div>
+                </div>
+            `
+            ul.appendChild(li);
         })
+        list.appendChild(ul);
     }
 
     return {
         getSelectors,
         populateWatchlist,
         openFilmSearch,
-        getFilmSearchResults,
         closeSearches,
         showCinemaFilms,
         openCinemaReleases,
@@ -216,9 +213,6 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         // Open film search
         document.getElementById(UISelectors.filmSearch.searchFilmBtn).addEventListener("click", searchFilmClick);
 
-        // add searched film
-        document.getElementById(UISelectors.filmSearch.filmSearchAddBtn).addEventListener("click", searchFilmAddClick);
-
         // // Close film search
         document.getElementById(UISelectors.watchlist.watchlist).addEventListener("click", backClick);
         
@@ -227,6 +221,7 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         
         // // Open cinema release
         document.getElementById(UISelectors.cinemaFilms.cinemaReleasesBtn).addEventListener("click", cinemaReleasesClick);
+
     }
 
     // Film Search
@@ -242,28 +237,52 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
             APICtrl.getMovieLocation(data)
             .then(data => {
                 UICtrl.showFilm(data);
+
+                // add event listener to add btn
+                document.getElementById(UICtrl.getSelectors().filmSearch.filmSearchAddBtn).addEventListener("click", function(){
+                    // add film to watchlist
+                    addFilmClick(data);
+                });
             })
         });
     }
 
-    const searchFilmAddClick = () => {
-        const film = UICtrl.getFilmSearchResults();
+    const addFilmClick = (film) => {
+        // add film to local storage
         StorageCtrl.addFilmToLocalStorage(film);
+        // refresh watchlist with new film
         UICtrl.populateWatchlist();
     }
 
     const backClick = (e) => {
         if(e.target.id === "back-btn"){
+            // close film search / cinema releases
             UICtrl.closeSearches();
         }
     }
 
     // Cinema Releases
     const cinemaReleasesClick = () => {
+        // open cinema releases
         UICtrl.openCinemaReleases();
+        // get films from api
         APICtrl.getCinemaFilms()
-            .then(data => {
+            .then(data => {                
+                // show films in ui
                 UICtrl.showCinemaFilms(data);
+
+                // get cinema list
+                const cinemaList = document.querySelectorAll(UICtrl.getSelectors().cinemaFilms.cinemaAddBtn);
+                // add event listener to each cinema btn
+                cinemaList.forEach((item, index) => {
+                    item.addEventListener("click", function(){
+                        // add film location
+                        data.results[index].location = "Cinema";
+
+                        // Add film to watchlist
+                        addFilmClick(data.results[index])
+                    })
+                })
             })
     }
 
