@@ -84,7 +84,7 @@ const UICtrl = (() => {
         },
         cinemaFilms: {
             cinemaReleasesBtn: "cinema-releases-btn",
-            cinemaAddBtn: ".cinema-add-btn",
+            cinemaFilmBtns: ".cinema-film-btns",
             cinemaFilms: "cinema-films",
             cinemaFilmsList: "cinema-films-list"
         }
@@ -178,12 +178,12 @@ const UICtrl = (() => {
 
         films.results.forEach(film => {
             const li =  document.createElement("li");
-            li.classList = "card mb-4 mx-2";
+            li.classList = "card mb-4 mx-2 cinema-films-item";
             li.innerHTML = `
                 <img src="https://image.tmdb.org/t/p/original/${film.poster_path}" class="card-img-top">
                 <div class="card-body d-flex flex-column align-items-center justify-content-between">
                     <h3 class="card-title text-dark">${film.original_title}</h3>
-                    <div>
+                    <div class="cinema-film-btns">
                         <button class="btn btn-primary">Details</button>
                         <button class="btn btn-primary cinema-add-btn">Add to Watchlist</button>
                     </div>
@@ -194,14 +194,39 @@ const UICtrl = (() => {
         list.appendChild(ul);
     }
 
+    const openCinemaFilmDetails = (film, e) => {
+        // open details modal
+        e.target.closest("li").classList.add("cinema-film-details");
+        // add film details to card modal
+        const body = e.target.closest(".card-body");
+        const div = document.createElement("div");
+        const date = new Date(film.release_date);
+        console.log(film);
+        div.innerHTML = `
+            <p>${film.overview}</p>
+            <p>
+                Release Date: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}
+            </p>
+            <p>Age Rating: PG</p>
+            <div>
+                Genre: <span class="badge bg-primary">Action</span> 
+            </div>
+            <div>
+                Rating: <span>&star;&star;&star;</span> 
+            </div>
+        `;
+        body.insertBefore(div, e.target.parentElement);
+    }
+
     return {
         getSelectors,
         populateWatchlist,
         openFilmSearch,
+        showFilm,
         closeSearches,
-        showCinemaFilms,
         openCinemaReleases,
-        showFilm
+        showCinemaFilms,
+        openCinemaFilmDetails
     }
 })();
 
@@ -213,15 +238,14 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         // Open film search
         document.getElementById(UISelectors.filmSearch.searchFilmBtn).addEventListener("click", searchFilmClick);
 
-        // // Close film search
+        //Close film search
         document.getElementById(UISelectors.watchlist.watchlist).addEventListener("click", backClick);
         
-        // // Movie input event
+        //Movie input event
         document.getElementById(UISelectors.filmSearch.movieInput).addEventListener("keyup", inputMovieKeyup);
         
-        // // Open cinema release
+        //Open cinema release
         document.getElementById(UISelectors.cinemaFilms.cinemaReleasesBtn).addEventListener("click", cinemaReleasesClick);
-
     }
 
     // Film Search
@@ -232,10 +256,13 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
     const inputMovieKeyup = (e) => {
         const movieSearch = document.getElementById(UICtrl.getSelectors().filmSearch.movieInput).value;
         const movieQuery = movieSearch.replace(" ", "+");
+        // get film data
         APICtrl.getMovieData(movieQuery)
         .then(data => {
+            // get location for searched film
             APICtrl.getMovieLocation(data)
             .then(data => {
+                // show film in ui
                 UICtrl.showFilm(data);
 
                 // add event listener to add btn
@@ -271,19 +298,28 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
                 // show films in ui
                 UICtrl.showCinemaFilms(data);
 
-                // get cinema list
-                const cinemaList = document.querySelectorAll(UICtrl.getSelectors().cinemaFilms.cinemaAddBtn);
-                // add event listener to each cinema btn
+                // get cinema list btns
+                const cinemaList = document.querySelectorAll(UICtrl.getSelectors().cinemaFilms.cinemaFilmBtns);
+                // add event listeners cinema btns
                 cinemaList.forEach((item, index) => {
-                    item.addEventListener("click", function(){
+                    // add event listener to details btn
+                    item.firstElementChild.addEventListener("click", function(e){
+                        cinemaFilmDetailsClick(data.results[index], e);
+                    })
+
+                    // add event listener to add btn
+                    item.lastElementChild.addEventListener("click", function(){
                         // add film location
                         data.results[index].location = "Cinema";
-
                         // Add film to watchlist
                         addFilmClick(data.results[index])
                     })
                 })
             })
+    }
+
+    const cinemaFilmDetailsClick = (film, e) => {
+        UICtrl.openCinemaFilmDetails(film, e);
     }
 
     // Initialisation
