@@ -80,10 +80,6 @@ const UICtrl = (() => {
             filmSearch: "film-search",
             movieInfo: "movie-info",
             movieInput: "movie-input",
-            movieInfoTitle: "movie-info-title",
-            movieInfoDesc: "movie-info-desc",
-            movieInfoImg: "movie-info-img",
-            movieInfoLocation: "movie-info-location",
         },
         cinemaFilms: {
             cinemaReleasesBtn: "cinema-releases-btn",
@@ -128,24 +124,30 @@ const UICtrl = (() => {
         watchlist.insertBefore(backBtn, watchlistTable);
     }
 
-    const showFilm = (movie) => {
-        document.getElementById(UISelectors.filmSearch.movieInfo).style.display = "flex";
-
-        const title = document.getElementById(UISelectors.filmSearch.movieInfoTitle);
-        const desc = document.getElementById(UISelectors.filmSearch.movieInfoDesc);
-        const img = document.getElementById(UISelectors.filmSearch.movieInfoImg);
-        const location = document.getElementById(UISelectors.filmSearch.movieInfoLocation);
-
-        title.innerText = movie.original_title;
-        desc.innerText = movie.overview;
-        img.setAttribute("src", `https://image.tmdb.org/t/p/original/${movie.poster_path}`);
-        location.innerText = movie.location;
-
-        const yearEl = document.createElement("em");
-        const date = new Date(movie.release_date);
-        yearEl.innerText = `(${date.getFullYear()})`;
-        yearEl.classList.add("movie-info-year");
-        title.appendChild(yearEl);
+    const showFilm = (film) => {
+        const div = document.getElementById(UISelectors.filmSearch.movieInfo);
+        const date = new Date(film.release_date);
+        
+        div.classList.replace("d-none", "d-flex");
+        div.innerHTML = `
+            <div class="col-auto ">
+                <img src="https://image.tmdb.org/t/p/original/${film.poster_path}" class="img-fluid rounded" alt="...">
+            </div>
+            <div class="card col">
+                <div class="card-body">
+                    <h5 class="card-title">${film.title} 
+                        <span>(${film.certification})</span>
+                        <em class="movie-info-year"> (${date.getFullYear()})</em>
+                    </h5>
+                    <p class="card-text">${film.overview}</p>
+                            <p class="card-text">${UICtrl.getGenres(film)}
+                            <p class="card-text">${UICtrl.getStarRating(film)}</p>
+                            <p class="card-text"><small class="text-muted">${film.location}</small>
+                    </p>
+                    <button id="film-search-add-btn" class="btn btn-sm film-search-add-btn float-end mb-2">Add film to watchlist</button>
+                </div>
+            </div>
+        `
     }
 
     const openCinemaReleases = () => {
