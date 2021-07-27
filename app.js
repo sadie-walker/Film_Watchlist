@@ -122,7 +122,7 @@ const UICtrl = (() => {
         filmSearch.style.display = "flex";
         watchlist.classList.add("list-aside");
 
-        backBtn.innerText = "Back to watchlist ->";
+        backBtn.innerHTML = `Back to watchlist <i class="far fa-arrow-alt-circle-right"></i>`;
         backBtn.classList = "btn text-light";
         backBtn.id = "back-btn";
         watchlist.insertBefore(backBtn, watchlistTable);
@@ -155,8 +155,7 @@ const UICtrl = (() => {
         const backBtn = document.createElement("button");
         cinemaFilms.style.display = "block";
         watchlist.classList.add("list-aside");
-
-        backBtn.innerText = "<- Back to watchlist";
+        backBtn.innerHTML = `<i class="far fa-arrow-alt-circle-left"></i> Back to watchlist`;
         backBtn.classList = "btn text-light";
         backBtn.id = "back-btn";
         watchlist.insertBefore(backBtn, watchlistTable);
