@@ -194,13 +194,19 @@ const UICtrl = (() => {
 
     const openCinemaFilmDetails = (film, e) => {
         // open details modal
-        e.target.closest("li").classList.add("cinema-film-details");
+        e.target.closest("li").classList.add("cinema-film-details", "flex-row");
+        console.log(film);
+
+        // Change card type
+        e.target.closest(".card"). classList.add("flex-row");
+        const body = e.target.closest(".card-img-overlay");
+        body.classList = "card-body d-flex flex-column align-items-center justify-content-between";
+
         // add film details to card modal
-        const body = e.target.closest(".card-body");
         const div = document.createElement("div");
         const date = new Date(film.release_date);
-        console.log(film);
         div.innerHTML = `
+            <i id="details-close-btn" class="fas fa-times"></i>
             <p>${film.overview}</p>
             <p>
                 Release Date: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}
@@ -213,6 +219,7 @@ const UICtrl = (() => {
                 Rating: <span>&star;&star;&star;</span> 
             </div>
         `;
+        div.className = "card-text";
         body.insertBefore(div, e.target.parentElement);
     }
 

@@ -88,3 +88,44 @@ ul {
 	color: grey;
 	font-size: 16px;
 }
+
+.cinema-film-details {
+	max-width: 850px;
+	min-width: 650px;
+	width: fit-content;
+	height: 550px;
+	position: fixed;
+	top: 10%;
+	left: 0px;
+	margin: auto;
+	flex-direction: row;
+	transition: width 0.5s ease;
+	z-index: 1;
+}
+
+.cinema-film-details img {
+	width: auto;
+	height: 100%;
+}
+
+.cinema-film-details .card-body #details-close-btn {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	cursor: pointer;
+}
+
+.cinema-film-details .card-body .cinema-film-btns button:first-of-type {
+	display: none;
+}
+
+.cinema-film-details::before {
+	content: "";
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.623);
+	z-index: -1;
+}
