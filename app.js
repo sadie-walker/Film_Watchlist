@@ -170,28 +170,26 @@ const UICtrl = (() => {
     }
 
     const showCinemaFilms = (films) => {
-        const list = document.getElementById(UISelectors.cinemaFilms.cinemaFilmsList);
-        list.innerHTML = "";
-
-        let ul = document.createElement("ul");
-        ul.classList = "list-unstyled d-flex flex-wrap";
+        const ul = document.getElementById(UISelectors.cinemaFilms.cinemaFilmsList);
+        ul.innerHTML = "";
 
         films.results.forEach(film => {
             const li =  document.createElement("li");
-            li.classList = "card mb-4 mx-2 cinema-films-item";
+            li.classList = "cinema-films-item card col-5 col-lg-4";
             li.innerHTML = `
-                <img src="https://image.tmdb.org/t/p/original/${film.poster_path}" class="card-img-top">
-                <div class="card-body d-flex flex-column align-items-center justify-content-between">
-                    <h3 class="card-title text-dark">${film.original_title}</h3>
-                    <div class="cinema-film-btns">
-                        <button class="btn btn-primary">Details</button>
-                        <button class="btn btn-primary cinema-add-btn">Add to Watchlist</button>
+                <div class="card bg-dark text-white h-100">
+                    <img src="https://image.tmdb.org/t/p/original/${film.poster_path}" class="card-img h-100" alt="...">
+                    <div class="card-img-overlay">
+                        <h3 class="card-title">${film.title}</h3>
+                        <div class="cinema-film-btns">
+                            <button class="btn btn-primary">Details</button>
+                            <button class="btn btn-primary cinema-add-btn text-nowrap">Add to Watchlist</button>
+                        </div>
                     </div>
                 </div>
             `
             ul.appendChild(li);
         })
-        list.appendChild(ul);
     }
 
     const openCinemaFilmDetails = (film, e) => {

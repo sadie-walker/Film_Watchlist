@@ -58,16 +58,13 @@ ul {
 }
 
 /* Cinema Listing Section*/
-.cinema-films {
-	display: none;
+.card-img-overlay {
+	visibility: hidden;
 }
 
-.cinema-films li {
-	width: 150px;
-}
-
-.cinema-films img {
-	width: 100%;
+.card:hover .card-img-overlay {
+	visibility: visible;
+	background-color: rgba(0, 0, 0, 0.5);
 }
 
 /* DOM Styles */
