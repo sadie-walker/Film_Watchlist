@@ -36,15 +36,6 @@ ul {
 }
 
 /* Film Search Section */
-.film-search {
-	display: none;
-}
-
-.film-search .movie-info {
-	display: none;
-	/* display: flex; */
-}
-
 .film-search .movie-info img {
 	width: 200px;
 	height: 300px;
@@ -68,10 +59,6 @@ ul {
 }
 
 /* DOM Styles */
-.list-aside {
-	width: 50%;
-}
-
 .list-aside .add-films-btns {
 	display: none;
 }

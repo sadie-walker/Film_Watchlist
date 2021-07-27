@@ -119,7 +119,7 @@ const UICtrl = (() => {
         const watchlistTable = document.getElementById(UISelectors.watchlist.watchlistTable);
         const backBtn = document.createElement("button");
         const filmSearch = document.getElementById(UISelectors.filmSearch.filmSearch);
-        filmSearch.style.display = "flex";
+        filmSearch.classList.replace("d-none", "d-flex");
         watchlist.classList.add("list-aside");
 
         backBtn.innerHTML = `Back to watchlist <i class="far fa-arrow-alt-circle-right"></i>`;
@@ -153,7 +153,7 @@ const UICtrl = (() => {
         const watchlist = document.getElementById(UISelectors.watchlist.watchlist);
         const watchlistTable = document.getElementById(UISelectors.watchlist.watchlistTable);
         const backBtn = document.createElement("button");
-        cinemaFilms.style.display = "block";
+        cinemaFilms.classList.replace("d-none", "d-block");
         watchlist.classList.add("list-aside");
         backBtn.innerHTML = `<i class="far fa-arrow-alt-circle-left"></i> Back to watchlist`;
         backBtn.classList = "btn text-light";
