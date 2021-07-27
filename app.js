@@ -216,14 +216,37 @@ const UICtrl = (() => {
             </p>
             <p>Age Rating: PG</p>
             <div>
-                Genre: <span class="badge bg-primary">Action</span> 
+                Genre: 
+                    ${UICtrl.getGenres(film)}
             </div>
-            <div>
-                Rating: <span>&star;&star;&star;</span> 
+            <div> 
+                Rating: 
+                    ${UICtrl.getStarRating(film)}
             </div>
         `;
         div.className = "card-text";
         body.insertBefore(div, e.target.parentElement);
+    }
+
+    const getGenres = (film) => {
+        let genres = "";
+        film.genres.forEach(genre => {
+            genres += `<span class="badge bg-primary">${genre}</span> `
+        })
+        return genres;
+    }
+
+    const getStarRating = (film) => {
+        let stars = "";
+
+        for(let i=0; i < 5; i++){
+            if(i < Math.round((film.vote_average/2))){
+                stars += `<i class="fas fa-star"></i>`
+            } else {
+                stars += `<i class="far fa-star"></i>`
+            }
+        }
+        return stars
     }
 
     return {
@@ -234,7 +257,9 @@ const UICtrl = (() => {
         closeSearches,
         openCinemaReleases,
         showCinemaFilms,
-        openCinemaFilmDetails
+        openCinemaFilmDetails,
+        getGenres,
+        getStarRating,
     }
 })();
 
