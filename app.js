@@ -128,16 +128,6 @@ const UICtrl = (() => {
         watchlist.insertBefore(backBtn, watchlistTable);
     }
 
-    const closeSearches = () => {
-        const filmSearch = document.getElementById(UISelectors.filmSearch.filmSearch);
-        const cinemaFilms = document.getElementById(UISelectors.cinemaFilms.cinemaFilms);
-        const watchlist = document.getElementById(UISelectors.watchlist.watchlist);
-        filmSearch.style.display = "none";
-        cinemaFilms.style.display = "none";
-        watchlist.classList.remove("list-aside");
-        watchlist.firstElementChild.remove();
-    }
-
     const showFilm = (movie) => {
         document.getElementById(UISelectors.filmSearch.movieInfo).style.display = "flex";
 
@@ -249,6 +239,28 @@ const UICtrl = (() => {
         return stars
     }
 
+    const closeCinemaFilmDetails = (e) => {
+        // remove modal layout
+        e.target.closest("li").classList.remove("cinema-film-details", "flex-row");
+
+        // change card type
+        e.target.closest(".card"). classList.remove("flex-row");
+        e.target.closest(".card-body").classList = "card-img-overlay";
+
+        // remove added film details
+        e.target.closest(".card-img-overlay").firstElementChild.nextElementSibling.remove();
+    }
+
+    const closeSearches = () => {
+        const filmSearch = document.getElementById(UISelectors.filmSearch.filmSearch);
+        const cinemaFilms = document.getElementById(UISelectors.cinemaFilms.cinemaFilms);
+        const watchlist = document.getElementById(UISelectors.watchlist.watchlist);
+        filmSearch.classList.replace("d-flex", "d-none");
+        cinemaFilms.classList.replace("d-block", "d-none");
+        watchlist.classList.remove("list-aside");
+        watchlist.firstElementChild.nextElementSibling.remove();
+    }
+
     return {
         getSelectors,
         populateWatchlist,
@@ -260,6 +272,7 @@ const UICtrl = (() => {
         openCinemaFilmDetails,
         getGenres,
         getStarRating,
+        closeCinemaFilmDetails
     }
 })();
 
@@ -340,11 +353,15 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         })
     }
 
-    const addFilmClick = (film) => {
+    const addFilmClick = (film, e) => {
         // add film to local storage
         StorageCtrl.addFilmToLocalStorage(film);
         // refresh watchlist with new film
         UICtrl.populateWatchlist();
+
+        if(e.target.closest("li") !== null && e.target.closest("li").classList.contains("cinema-film-details")){
+            UICtrl.closeCinemaFilmDetails(e);
+        }
     }
 
     const backClick = (e) => {
@@ -402,6 +419,9 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
 
     }
 
+    // Close cinema film details modal
+    const closeFilmDetailsClick = (e) => {
+        UICtrl.closeCinemaFilmDetails(e);
     }
 
     // Initialisation
