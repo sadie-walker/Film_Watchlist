@@ -1,7 +1,6 @@
 const APICtrl = (() => {
     const apiKey = "8ed514450ca5d54b5bc425d6d68cc9f8";
 
-
     async function getMovieData(title) {
         const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${title}`);
         const data = await res.json();
@@ -12,17 +11,7 @@ const APICtrl = (() => {
     async function getMovieLocation(movie) {
         const res = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/watch/providers?api_key=${apiKey}`);
         const data = await res.json();
-        const locations = data.results.GB;
-        movie.location = "";
-
-        locations.flatrate.forEach((provider, index) => {
-            movie.location += `${provider.provider_name} `;
-
-            if(index < locations.flatrate.length-1){
-                movie.location += ", ";
-            }
-        })
-        return movie;
+        return data;
     }
 
     async function getCinemaFilms() {
@@ -31,10 +20,24 @@ const APICtrl = (() => {
         return data;
     }
 
+    async function getGenreIDs(){
+        const res = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-GB`);
+        const data = await res.json();
+        return data;
+    }
+
+    async function getFilmCertification(film) {
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${film.id}/release_dates?api_key=${apiKey}`);
+        const data = await res.json();
+        return data;
+    }
+
     return {
         getMovieData,
         getMovieLocation,
-        getCinemaFilms
+        getCinemaFilms,
+        getGenreIDs,
+        getFilmCertification
     }
 
 })();
@@ -263,20 +266,53 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         const movieQuery = movieSearch.replace(" ", "+");
         // get film data
         APICtrl.getMovieData(movieQuery)
-        .then(data => {
-            // get location for searched film
-            APICtrl.getMovieLocation(data)
-            .then(data => {
+        .then(film => {
+            // Get certification, location & genres
+            Promise.all([APICtrl.getMovieLocation(film), APICtrl.getGenreIDs(), APICtrl.getFilmCertification(film)])
+            .then(res => {
+
+                // Set film location
+                if(res[0].results.GB === undefined) {
+                    film.location = "*Unavailable for streaming*";
+                } else {
+                    const locations = res[0].results.GB;
+                    film.location = "";
+            
+                    if(locations.flatrate === undefined) {
+                        film.location = "*Unavailable for streaming*";
+                    } else {
+                        locations.flatrate.forEach((provider, index) => {
+                            film.location += `${provider.provider_name} `;
+                
+                            if(index < locations.flatrate.length-1){
+                                film.location += ", ";
+                            }
+                        })
+                    }
+                }
+
+                // Set film genres
+                const genres = film.genre_ids.map(id => {
+                    return res[1].genres.find(item => item.id === id).name;
+                })
+                film.genres = genres;
+
+                // Set film certification
+                const releaseDateInfo = res[2].results.find(obj => {
+                    return obj.iso_3166_1 === "GB";
+                });
+                film.certification = releaseDateInfo.release_dates[0].certification;
+
                 // show film in ui
-                UICtrl.showFilm(data);
+                UICtrl.showFilm(film);
 
                 // add event listener to add btn
-                document.getElementById(UICtrl.getSelectors().filmSearch.filmSearchAddBtn).addEventListener("click", function(){
+                document.getElementById(UICtrl.getSelectors().filmSearch.filmSearchAddBtn).onclick = () => {
                     // add film to watchlist
-                    addFilmClick(data);
-                });
+                    addFilmClick(film, e);
+                };
             })
-        });
+        })
     }
 
     const addFilmClick = (film) => {
@@ -323,8 +359,24 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
             })
     }
 
+    // Open cinema film details modal
     const cinemaFilmDetailsClick = (film, e) => {
-        UICtrl.openCinemaFilmDetails(film, e);
+        APICtrl.getGenreIDs()
+            .then(data => {
+                // Add genres to film data
+                const genres = film.genre_ids.map(id => {
+                    return data.genres.find(item => item.id === id).name;
+                })
+                film.genres = genres;
+                // open film details
+                UICtrl.openCinemaFilmDetails(film, e);
+                // add event listener to close btn
+                const closeBtn = e.target.parentElement.previousElementSibling.firstElementChild;
+                closeBtn.addEventListener("click", closeFilmDetailsClick);
+            })
+
+    }
+
     }
 
     // Initialisation
