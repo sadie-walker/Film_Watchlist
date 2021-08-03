@@ -12,19 +12,39 @@
     <title>Movie Watchlist</title>
 </head>
 
-<body class="vh-100 overflow-hidden">
+<body>
     <header class="container text-center py-4">
         <h1 class="display-3 text-light">Movie Watchlist</h1>
     </header>
     <main>
         <div class="container-xl">
-            <div class="row">
+            <div class="page-layout row">
                 <!-- FILM SEARCH -->
                 <section id="film-search" class="film-search flex-column col-8 d-none">
                     <h2 class="text-light">Film Search</h2>
                     <input type="text" id="movie-input" class="form-control" placeholder="Search by film title...">
                     <div id="movie-info" class="mt-3 me-0 movie-info row d-none"></div>
                 </section>
+                <!-- WATCHLIST -->
+                <section id="watchlist" class="watchlist container col">
+                    <div class="add-films-btns mb-3">
+                        <h2 class="text-light">Add Films:</h2>
+                        <button class="btn btn-outline" id="search-film-btn">Search Film</button>
+                        <button class="btn btn-outline" id="cinema-releases-btn">Cinema Releases</button>
+                    </div>
+                    <table id="watchlist-table" class="table table-light align-middle d-block overflow-auto">
+                        <thead class="table-dark sticky-top">
+                            <tr>
+                                <th scope="col">Poster</th>
+                                <th scope="col">Film</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Location</th>
+                            </tr>
+                        </thead>
+                        <tbody class="align-item-center"></tbody>
+                    </table>
+                </section>
+                <!-- CINEMA RELEASES -->
                 <section id="cinema-films" class="cinema-films col-8 d-none">
                     <h2 class="text-center text-light mb-3">Cinema Releases</h2>
                     <ul id="cinema-films-list" class="row gx-0 gy-3 justify-content-center"></ul>

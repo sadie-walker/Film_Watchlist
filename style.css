@@ -10,9 +10,21 @@ ul {
 	padding: 0;
 }
 
+/* Layout */
+.page-layout {
+	max-height: 2800px;
+	overflow: hidden;
+}
+
 /* Watchlist Section */
-.watchlist img {
-	height: 80px;
+.watchlist table {
+	border-radius: 5px;
+	max-height: calc(100vh - 250px);
+}
+
+.watchlist table img {
+	height: 150px;
+	width: auto;
 }
 
 .add-films-btns button:first-of-type {
@@ -45,7 +57,6 @@ ul {
 	background-color: #9d8df1;
 	color: #fff;
 	width: fit-content;
-	margin-left: 8px;
 }
 
 /* Cinema Listing Section*/
@@ -63,8 +74,18 @@ ul {
 	display: none;
 }
 
-.list-aside thead th:nth-of-type(n + 3),
-.list-aside tbody td:nth-of-type(n + 3) {
+.cinema-open table {
+	max-height: 2750px;
+}
+
+.cinema-open table thead,
+.cinema-open table tbody {
+	width: inherit;
+	display: table;
+}
+
+.list-aside thead th:not(:nth-of-type(2)),
+.list-aside tbody td:not(:nth-of-type(2)) {
 	display: none;
 }
 

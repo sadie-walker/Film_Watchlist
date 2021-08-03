@@ -100,10 +100,11 @@ const UICtrl = (() => {
         watchlist.forEach(film => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
-                <td><input type="checkbox"></td>
-                <td class="text-nowrap">${film.title} (${new Date(film.release_date).getFullYear()})</td>
+                <td class="p-0">
+                    <img src="https://image.tmdb.org/t/p/original/${film.poster_path}">
+                </td>
+                <td>${film.title} (${new Date(film.release_date).getFullYear()})</td>
                 <td class="watchlist-desc">${film.overview}</td>
-                <td><img src="https://image.tmdb.org/t/p/original/${film.poster_path}"</td>
                 <td>${film.location}</td>
             `
             table.appendChild(tr);
@@ -144,7 +145,7 @@ const UICtrl = (() => {
                             <p class="card-text">${UICtrl.getStarRating(film)}</p>
                             <p class="card-text"><small class="text-muted">${film.location}</small>
                     </p>
-                    <button id="film-search-add-btn" class="btn btn-sm film-search-add-btn float-end mb-2">Add film to watchlist</button>
+                    <button id="film-search-add-btn" class="btn btn-sm film-search-add-btn float-end mb-2 ml-8">Add film to watchlist</button>
                 </div>
             </div>
         `
@@ -156,7 +157,7 @@ const UICtrl = (() => {
         const watchlistTable = document.getElementById(UISelectors.watchlist.watchlistTable);
         const backBtn = document.createElement("button");
         cinemaFilms.classList.replace("d-none", "d-block");
-        watchlist.classList.add("list-aside");
+        watchlist.classList.add("list-aside", "cinema-open");
         backBtn.innerHTML = `<i class="far fa-arrow-alt-circle-left"></i> Back to watchlist`;
         backBtn.classList = "btn text-light";
         backBtn.id = "back-btn";
@@ -258,7 +259,7 @@ const UICtrl = (() => {
         const watchlist = document.getElementById(UISelectors.watchlist.watchlist);
         filmSearch.classList.replace("d-flex", "d-none");
         cinemaFilms.classList.replace("d-block", "d-none");
-        watchlist.classList.remove("list-aside");
+        watchlist.classList.remove("list-aside", "cinema-open");
         watchlist.firstElementChild.nextElementSibling.remove();
     }
 
@@ -321,10 +322,10 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
                         film.location = "*Unavailable for streaming*";
                     } else {
                         locations.flatrate.forEach((provider, index) => {
-                            film.location += `${provider.provider_name} `;
+                            film.location += `${provider.provider_name}`;
                 
                             if(index < locations.flatrate.length-1){
-                                film.location += ", ";
+                                film.location += ",   ";
                             }
                         })
                     }
@@ -392,11 +393,11 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
                     })
 
                     // add event listener to add btn
-                    item.lastElementChild.addEventListener("click", function(){
+                    item.lastElementChild.addEventListener("click", function(e){
                         // add film location
                         data.results[index].location = "Cinema";
                         // Add film to watchlist
-                        addFilmClick(data.results[index])
+                        addFilmClick(data.results[index], e)
                     })
                 })
             })
