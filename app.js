@@ -109,6 +109,8 @@ const UICtrl = (() => {
             `
             table.appendChild(tr);
         })
+
+        UICtrl.checkEmptyTable();
     }
 
     const openFilmSearch = () => {
@@ -263,6 +265,17 @@ const UICtrl = (() => {
         watchlist.firstElementChild.nextElementSibling.remove();
     }
 
+    const checkEmptyTable = () => {
+        const tbody = document.querySelector("tbody");
+        const thead = document.querySelector("thead");
+        
+        if(!tbody.hasChildNodes()){
+            thead.classList.add("table-empty");
+        } else {
+            thead.classList.remove("table-empty");
+        }
+    }
+
     return {
         getSelectors,
         populateWatchlist,
@@ -274,7 +287,8 @@ const UICtrl = (() => {
         openCinemaFilmDetails,
         getGenres,
         getStarRating,
-        closeCinemaFilmDetails
+        closeCinemaFilmDetails,
+        checkEmptyTable
     }
 })();
 

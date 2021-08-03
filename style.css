@@ -21,6 +21,9 @@ ul {
 	border-radius: 5px;
 	max-height: calc(100vh - 250px);
 }
+.watchlist table thead {
+	width: inherit;
+}
 
 .watchlist table img {
 	height: 150px;
@@ -70,6 +73,11 @@ ul {
 }
 
 /* DOM Styles */
+.table-empty {
+	display: table;
+	width: inherit;
+}
+
 .list-aside .add-films-btns {
 	display: none;
 }
@@ -78,8 +86,8 @@ ul {
 	max-height: 2750px;
 }
 
-.cinema-open table thead,
-.cinema-open table tbody {
+.list-aside table thead,
+.list-aside table tbody {
 	width: inherit;
 	display: table;
 }
