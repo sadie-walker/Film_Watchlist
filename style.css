@@ -12,7 +12,6 @@ ul {
 
 /* Layout */
 .page-layout {
-	max-height: 2800px;
 	overflow: hidden;
 }
 
@@ -33,7 +32,7 @@ ul {
 }
 
 .watchlist table thead tr th:nth-of-type(4) {
-	width: 15%;
+	width: 20%;
 }
 
 .watchlist:not(.list-aside) table tbody tr {
@@ -46,7 +45,6 @@ ul {
 
 .watchlist table tbody tr .watchlist-desc > div {
 	height: 100px;
-	overflow: hidden;
 	overflow: auto;
 }
 
@@ -76,10 +74,6 @@ ul {
 }
 
 /* Film Search Section */
-.film-search .movie-info img {
-	width: 200px;
-	height: 300px;
-}
 
 .film-search .film-search-add-btn {
 	background-color: #9d8df1;
@@ -108,13 +102,14 @@ ul {
 }
 
 .cinema-open table {
-	max-height: 2750px;
+	max-height: 2600px;
 }
 
 .list-aside table thead,
 .list-aside table tbody {
 	width: inherit;
 	display: table;
+	z-index: -1;
 }
 
 .list-aside thead th:not(:nth-of-type(2)),
@@ -169,4 +164,26 @@ ul {
 	height: 100%;
 	background-color: rgba(0, 0, 0, 0.623);
 	z-index: -1;
+}
+
+/* Media Queries */
+@media only screen and (max-width: 760px) {
+	#movie-info .card .row div:first-child {
+		height: 300px;
+		overflow: hidden;
+	}
+
+	#movie-info .card .row div:first-child img {
+		object-fit: fill;
+		object-position: 0 -100px;
+	}
+
+	.watchlist table thead tr th:nth-of-type(3),
+	.watchlist table tbody tr td:nth-of-type(3) {
+		display: none;
+	}
+
+	.list-aside table {
+		display: none !important;
+	}
 }

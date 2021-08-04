@@ -106,7 +106,7 @@ const UICtrl = (() => {
                 <td class="text-nowrap">${film.title} (${new Date(film.release_date).getFullYear()})</td>
                 <td class="watchlist-desc"><div>${film.overview}</div></td>
                 <td>${film.location}</td>
-            `
+                `
             table.appendChild(tr);
         })
 
@@ -116,8 +116,9 @@ const UICtrl = (() => {
     const openFilmSearch = () => {
         const watchlist = document.getElementById(UISelectors.watchlist.watchlist);
         const watchlistTable = document.getElementById(UISelectors.watchlist.watchlistTable);
-        const backBtn = document.createElement("button");
         const filmSearch = document.getElementById(UISelectors.filmSearch.filmSearch);
+        const backBtn = document.createElement("button");
+
         filmSearch.classList.replace("d-none", "d-flex");
         watchlist.classList.add("list-aside");
 
@@ -133,21 +134,25 @@ const UICtrl = (() => {
         
         div.classList.replace("d-none", "d-flex");
         div.innerHTML = `
-            <div class="col-auto ">
-                <img src="https://image.tmdb.org/t/p/original/${film.poster_path}" class="img-fluid rounded" alt="...">
-            </div>
-            <div class="card col">
-                <div class="card-body">
-                    <h5 class="card-title">${film.title} 
-                        <span>(${film.certification})</span>
-                        <em class="movie-info-year"> (${date.getFullYear()})</em>
-                    </h5>
-                    <p class="card-text">${film.overview}</p>
-                            <p class="card-text">${UICtrl.getGenres(film)}
-                            <p class="card-text">${UICtrl.getStarRating(film)}</p>
-                            <p class="card-text"><small class="text-muted">${film.location}</small>
-                    </p>
-                    <button id="film-search-add-btn" class="btn btn-sm film-search-add-btn float-end mb-2 ml-8">Add film to watchlist</button>
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-6 col-xxl-4">
+                        <img src="https://image.tmdb.org/t/p/original/${film.poster_path}" class="img-fluid rounded" alt="...">
+                    </div>
+                    <div class="col-md-6 col-xxl-8">
+                        <div class="card-body">
+                            <h5 class="card-title">${film.title} 
+                                <span>(${film.certification})</span>
+                                <em class="movie-info-year"> (${date.getFullYear()})</em>
+                            </h5>
+                            <p class="card-text">${film.overview}</p>
+                                    <p class="card-text">${UICtrl.getGenres(film)}
+                                    <p class="card-text">${UICtrl.getStarRating(film)}</p>
+                                    <p class="card-text"><small class="text-muted">${film.location}</small>
+                            </p>
+                            <button id="film-search-add-btn" class="btn btn-sm film-search-add-btn float-end mb-2 ml-8">Add film to watchlist</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         `
@@ -158,12 +163,16 @@ const UICtrl = (() => {
         const watchlist = document.getElementById(UISelectors.watchlist.watchlist);
         const watchlistTable = document.getElementById(UISelectors.watchlist.watchlistTable);
         const backBtn = document.createElement("button");
+
         cinemaFilms.classList.replace("d-none", "d-block");
         watchlist.classList.add("list-aside", "cinema-open");
+
         backBtn.innerHTML = `<i class="far fa-arrow-alt-circle-left"></i> Back to watchlist`;
         backBtn.classList = "btn text-light";
         backBtn.id = "back-btn";
         watchlist.insertBefore(backBtn, watchlistTable);
+
+
     }
 
     const showCinemaFilms = (films) => {
@@ -172,7 +181,7 @@ const UICtrl = (() => {
 
         films.results.forEach(film => {
             const li =  document.createElement("li");
-            li.classList = "cinema-films-item card col-5 col-lg-4";
+            li.classList = "col-5 col-lg-4";
             li.innerHTML = `
                 <div class="card bg-dark text-white h-100">
                     <img src="https://image.tmdb.org/t/p/original/${film.poster_path}" class="card-img h-100" alt="...">
@@ -192,7 +201,6 @@ const UICtrl = (() => {
     const openCinemaFilmDetails = (film, e) => {
         // open details modal
         e.target.closest("li").classList.add("cinema-film-details", "flex-row");
-        console.log(film);
 
         // Change card type
         e.target.closest(".card"). classList.add("flex-row");
@@ -259,6 +267,7 @@ const UICtrl = (() => {
         const filmSearch = document.getElementById(UISelectors.filmSearch.filmSearch);
         const cinemaFilms = document.getElementById(UISelectors.cinemaFilms.cinemaFilms);
         const watchlist = document.getElementById(UISelectors.watchlist.watchlist);
+
         filmSearch.classList.replace("d-flex", "d-none");
         cinemaFilms.classList.replace("d-block", "d-none");
         watchlist.classList.remove("list-aside", "cinema-open");

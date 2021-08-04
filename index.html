@@ -17,13 +17,13 @@
         <h1 class="display-3 text-light">Movie Watchlist</h1>
     </header>
     <main>
-        <div class="container-xl">
+        <div class="container-lg">
             <div class="page-layout row">
                 <!-- FILM SEARCH -->
-                <section id="film-search" class="film-search flex-column col-8 d-none">
+                <section id="film-search" class="film-search flex-column col-12 col-lg-8 d-none">
                     <h2 class="text-light">Film Search</h2>
                     <input type="text" id="movie-input" class="form-control" placeholder="Search by film title...">
-                    <div id="movie-info" class="mt-3 me-0 movie-info row d-none"></div>
+                    <div id="movie-info" class="mt-3 me-0 movie-info flex-column flex-md-row d-none"></div>
                 </section>
                 <!-- WATCHLIST -->
                 <section id="watchlist" class="watchlist container col">
@@ -45,9 +45,9 @@
                     </table>
                 </section>
                 <!-- CINEMA RELEASES -->
-                <section id="cinema-films" class="cinema-films col-8 d-none">
+                <section id="cinema-films" class="cinema-films col-12 col-md-8 d-none">
                     <h2 class="text-center text-light mb-3">Cinema Releases</h2>
-                    <ul id="cinema-films-list" class="row gx-0 gy-3 justify-content-center"></ul>
+                    <ul id="cinema-films-list" class="row list-unstyled gx-2 gy-3 justify-content-center"></ul>
                 </section>
             </div>
         </div>
