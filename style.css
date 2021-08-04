@@ -20,13 +20,38 @@ ul {
 .watchlist table {
 	border-radius: 5px;
 	max-height: calc(100vh - 250px);
+	table-layout: fixed;
+	width: 100%;
 }
+
 .watchlist table thead {
 	width: inherit;
 }
 
-.watchlist table img {
+.watchlist table thead tr th:nth-of-type(3) {
+	width: 55%;
+}
+
+.watchlist table thead tr th:nth-of-type(4) {
+	width: 15%;
+}
+
+.watchlist:not(.list-aside) table tbody tr {
 	height: 150px;
+}
+
+.watchlist table tbody tr td {
+	height: inherit;
+}
+
+.watchlist table tbody tr .watchlist-desc > div {
+	height: 100px;
+	overflow: hidden;
+	overflow: auto;
+}
+
+.watchlist table img {
+	height: inherit;
 	width: auto;
 }
 

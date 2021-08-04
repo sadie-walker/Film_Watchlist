@@ -103,8 +103,8 @@ const UICtrl = (() => {
                 <td class="p-0">
                     <img src="https://image.tmdb.org/t/p/original/${film.poster_path}">
                 </td>
-                <td>${film.title} (${new Date(film.release_date).getFullYear()})</td>
-                <td class="watchlist-desc">${film.overview}</td>
+                <td class="text-nowrap">${film.title} (${new Date(film.release_date).getFullYear()})</td>
+                <td class="watchlist-desc"><div>${film.overview}</div></td>
                 <td>${film.location}</td>
             `
             table.appendChild(tr);
@@ -268,7 +268,7 @@ const UICtrl = (() => {
     const checkEmptyTable = () => {
         const tbody = document.querySelector("tbody");
         const thead = document.querySelector("thead");
-        
+
         if(!tbody.hasChildNodes()){
             thead.classList.add("table-empty");
         } else {
