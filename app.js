@@ -60,10 +60,30 @@ const StorageCtrl = (() => {
         watchlist.push(film);
         localStorage.setItem("watchlist", JSON.stringify(watchlist));
     }
+    
+    const deleteFilmFromLocalStorage = e => {
+        // get watchlist from local strg
+        let watchlist = StorageCtrl.getWatchlistFromLocalStorage();
+        // get film title from ui and remove year
+        let title = e.target.closest("tr").firstElementChild.nextElementSibling.innerText;
+        title = title.replace(/\ \(([^)]+)\)/, "");
+        
+        // get film index
+        const filmIndex = watchlist.findIndex(film => {
+            return film.title === title;
+        });
+        
+        // remove film from arr
+        watchlist.splice(filmIndex, 1);
+
+        // add watchlist arr to local strg
+        localStorage.setItem("watchlist", JSON.stringify(watchlist));
+    }
 
     return {
         addFilmToLocalStorage,
-        getWatchlistFromLocalStorage
+        getWatchlistFromLocalStorage,
+        deleteFilmFromLocalStorage
     }
 })();
 
@@ -73,6 +93,7 @@ const UICtrl = (() => {
             watchlist: "watchlist",
             watchlistTable: "watchlist-table",
             watchlistTableBody: "#watchlist-table tbody",
+            deleteBtn: "delete-btn",
         },
         filmSearch: {
             searchFilmBtn: "search-film-btn",
@@ -103,10 +124,14 @@ const UICtrl = (() => {
                 <td class="p-0">
                     <img src="https://image.tmdb.org/t/p/original/${film.poster_path}">
                 </td>
-                <td class="text-nowrap">${film.title} (${new Date(film.release_date).getFullYear()})</td>
+                <td>${film.title} (${new Date(film.release_date).getFullYear()})</td>
                 <td class="watchlist-desc"><div>${film.overview}</div></td>
-                <td>${film.location}</td>
+                <td>
+                    <div class="d-flex align-items-center justify-content-between">${UICtrl.getLocationList(film)}</div>
+                </td>
                 `
+            tr.addEventListener("mouseenter", App.mouseenterWatchlistItem);
+            tr.addEventListener("mouseleave", App.mouseleaveWatchlistItem);
             table.appendChild(tr);
         })
 
@@ -251,6 +276,21 @@ const UICtrl = (() => {
         return stars
     }
 
+    const getLocationList = (film) => {
+        const arr = film.location.split(", ");
+
+        if(arr.length > 1){
+            let ul = `<ul class="d-inline-block ms-2 mb-0">`;
+            arr.forEach(item => {
+                ul += `<li>${item}</li>`;
+            })
+            ul += `</ul>`;
+            return ul;
+        } else {
+            return arr[0];
+        }
+    }
+
     const closeCinemaFilmDetails = (e) => {
         // remove modal layout
         e.target.closest("li").classList.remove("cinema-film-details", "flex-row");
@@ -296,6 +336,7 @@ const UICtrl = (() => {
         openCinemaFilmDetails,
         getGenres,
         getStarRating,
+        getLocationList,
         closeCinemaFilmDetails,
         checkEmptyTable
     }
@@ -317,6 +358,8 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         
         //Open cinema release
         document.getElementById(UISelectors.cinemaFilms.cinemaReleasesBtn).addEventListener("click", cinemaReleasesClick);
+    
+        // document.getElementById(UISelectors.watchlist.deleteBtn).addEventListener("click", deleteBtnClicked);
     }
 
     // Film Search
@@ -386,6 +429,28 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
 
         if(e.target.closest("li") !== null && e.target.closest("li").classList.contains("cinema-film-details")){
             UICtrl.closeCinemaFilmDetails(e);
+        }
+    }
+
+    const mouseenterWatchlistItem = (e) => {
+        const row = e.target.closest("tr");
+        const div = row.lastElementChild.firstElementChild;
+        if(div.childElementCount <= 1){
+            div.innerHTML += `<i id="delete-btn" class="fas fa-trash float-end me-4"></i>`;
+            div.addEventListener("click", deleteBtnClicked);
+        }
+    }
+    
+    const mouseleaveWatchlistItem = (e) => {
+        const row = e.target.closest("tr");
+        const i = row.lastElementChild.firstElementChild.lastElementChild;
+        i.remove();
+    }
+
+    const deleteBtnClicked = (e) => {
+        if(e.target.id === UICtrl.getSelectors().watchlist.deleteBtn){
+            StorageCtrl.deleteFilmFromLocalStorage(e);
+            UICtrl.populateWatchlist();
         }
     }
 
@@ -459,7 +524,9 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
     }
 
     return {
-        init
+        init,
+        mouseenterWatchlistItem,
+        mouseleaveWatchlistItem
     }
 
 })(APICtrl, StorageCtrl, UICtrl);

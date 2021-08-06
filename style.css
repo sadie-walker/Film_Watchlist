@@ -27,12 +27,12 @@ ul {
 	width: inherit;
 }
 
-.watchlist table thead tr th:nth-of-type(3) {
-	width: 55%;
+.watchlist table thead tr th:nth-of-type(2) {
+	width: 40%;
 }
 
 .watchlist table thead tr th:nth-of-type(4) {
-	width: 20%;
+	width: 40%;
 }
 
 .watchlist:not(.list-aside) table tbody tr {
@@ -51,6 +51,15 @@ ul {
 .watchlist table img {
 	height: inherit;
 	width: auto;
+}
+
+.watchlist table #delete-btn {
+	color: red;
+	cursor: pointer;
+}
+
+.watchlist table #delete-btn:hover {
+	transform: scale(1.2);
 }
 
 .add-films-btns button:first-of-type {
@@ -185,5 +194,17 @@ ul {
 
 	.list-aside table {
 		display: none !important;
+	}
+}
+
+@media only screen and (min-width: 760px) {
+	.watchlist table thead tr th:nth-of-type(2) {
+		width: 20%;
+	}
+	.watchlist table thead tr th:nth-of-type(3) {
+		width: 50%;
+	}
+	.watchlist table thead tr th:nth-of-type(4) {
+		width: 20%;
 	}
 }
