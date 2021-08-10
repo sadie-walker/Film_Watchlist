@@ -22,7 +22,10 @@
                 <!-- FILM SEARCH -->
                 <section id="film-search" class="film-search flex-column col-12 col-lg-8 d-none">
                     <h2 class="text-light">Film Search</h2>
-                    <input type="text" id="movie-input" class="form-control" placeholder="Search by film title...">
+                    <div class="film-search-form">
+                        <input type="text" id="movie-input" class="movie-input form-control" placeholder="Search by film title..." autocomplete="off" required>
+                        <div id="film-results-dropdown" class="film-results-dropdown bg-light rounded"></div>
+                    </div>
                     <div id="movie-info" class="mt-3 me-0 movie-info flex-column flex-md-row d-none"></div>
                 </section>
                 <!-- WATCHLIST -->

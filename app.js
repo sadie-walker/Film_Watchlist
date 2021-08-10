@@ -4,8 +4,9 @@ const APICtrl = (() => {
     async function getMovieData(title) {
         const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${title}`);
         const data = await res.json();
-        let movie = data.results[0];
-        return movie;
+        // let movie = data.results[0];
+        // return movie;
+        return data.results;
     }
 
     async function getMovieLocation(movie) {
@@ -101,6 +102,7 @@ const UICtrl = (() => {
             filmSearch: "film-search",
             movieInfo: "movie-info",
             movieInput: "movie-input",
+            dropdown: "film-results-dropdown",
         },
         cinemaFilms: {
             cinemaReleasesBtn: "cinema-releases-btn",
@@ -156,7 +158,7 @@ const UICtrl = (() => {
     const showFilm = (film) => {
         const div = document.getElementById(UISelectors.filmSearch.movieInfo);
         const date = new Date(film.release_date);
-        
+
         div.classList.replace("d-none", "d-flex");
         div.innerHTML = `
             <div class="card">
@@ -257,6 +259,7 @@ const UICtrl = (() => {
 
     const getGenres = (film) => {
         let genres = "";
+
         film.genres.forEach(genre => {
             genres += `<span class="badge bg-primary">${genre}</span> `
         })
@@ -325,6 +328,23 @@ const UICtrl = (() => {
         }
     }
 
+    const createDropdownMenu = results => {
+        let dropdown = document.getElementById(UISelectors.filmSearch.dropdown);
+        dropdown.innerHTML = "";
+        let ul = document.createElement("ul");
+        ul.classList = "list-unstyled m-0";
+        results.forEach(film => {
+            const li = document.createElement("li");
+            li.classList = "dropdown-item p-2";
+            li.innerText = film.title;
+            li.addEventListener("click", function(){
+                App.filmSearchDropdownClick(film);
+            });
+            ul.appendChild(li);
+        })
+        dropdown.appendChild(ul);
+    }
+
     return {
         getSelectors,
         populateWatchlist,
@@ -338,7 +358,8 @@ const UICtrl = (() => {
         getStarRating,
         getLocationList,
         closeCinemaFilmDetails,
-        checkEmptyTable
+        checkEmptyTable,
+        createDropdownMenu
     }
 })();
 
@@ -358,8 +379,6 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         
         //Open cinema release
         document.getElementById(UISelectors.cinemaFilms.cinemaReleasesBtn).addEventListener("click", cinemaReleasesClick);
-    
-        // document.getElementById(UISelectors.watchlist.deleteBtn).addEventListener("click", deleteBtnClicked);
     }
 
     // Film Search
@@ -367,58 +386,87 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         UICtrl.openFilmSearch();
     }
     
-    const inputMovieKeyup = (e) => {
+    const inputMovieKeyup = () => {
         const movieSearch = document.getElementById(UICtrl.getSelectors().filmSearch.movieInput).value;
         const movieQuery = movieSearch.replace(" ", "+");
-        // get film data
-        APICtrl.getMovieData(movieQuery)
-        .then(film => {
-            // Get certification, location & genres
-            Promise.all([APICtrl.getMovieLocation(film), APICtrl.getGenreIDs(), APICtrl.getFilmCertification(film)])
-            .then(res => {
 
-                // Set film location
-                if(res[0].results.GB === undefined) {
+        // get film search results
+        APICtrl.getMovieData(movieQuery)
+        .then(data => {
+            // Show dropdown list of film results
+            const regex = new RegExp(`^${movieQuery}`, "i");
+            const results = data.filter(film => {
+                return regex.test(film.title);
+            })
+            results.splice(5);
+            UICtrl.createDropdownMenu(results);
+
+            // Get certification, location & genres
+            const film = results[0];
+            consolidateFilmDetails(film, showFilm);
+        })
+    }
+
+    // Film selected from dropdown
+    const filmSearchDropdownClick = film => {
+        document.getElementById(UICtrl.getSelectors().filmSearch.movieInput).value = film.title;
+        consolidateFilmDetails(film, showFilm);   
+    }
+
+    // Set film location, film genres & certifcation
+    const consolidateFilmDetails = (film, callback) => {
+        Promise.all([APICtrl.getMovieLocation(film), APICtrl.getGenreIDs(), APICtrl.getFilmCertification(film)])
+        .then(res => {
+            // Set film location
+            if(res[0].results.GB === undefined) {
+                film.location = "*Unavailable for streaming*";
+            } else {
+                const locations = res[0].results.GB;
+                film.location = "";
+        
+                if(locations.flatrate === undefined) {
                     film.location = "*Unavailable for streaming*";
                 } else {
-                    const locations = res[0].results.GB;
-                    film.location = "";
+                    locations.flatrate.forEach((provider, index) => {
+                        film.location += `${provider.provider_name}`;
             
-                    if(locations.flatrate === undefined) {
-                        film.location = "*Unavailable for streaming*";
-                    } else {
-                        locations.flatrate.forEach((provider, index) => {
-                            film.location += `${provider.provider_name}`;
-                
-                            if(index < locations.flatrate.length-1){
-                                film.location += ",   ";
-                            }
-                        })
-                    }
+                        if(index < locations.flatrate.length-1){
+                            film.location += ",   ";
+                        }
+                    })
                 }
+            }
 
-                // Set film genres
+            // Set film genres
+            if(res[1].genres !== undefined){
                 const genres = film.genre_ids.map(id => {
                     return res[1].genres.find(item => item.id === id).name;
                 })
                 film.genres = genres;
+            }
 
-                // Set film certification
+            // Set film certification
+            if(res[2].results.GB !== undefined){
                 const releaseDateInfo = res[2].results.find(obj => {
                     return obj.iso_3166_1 === "GB";
                 });
                 film.certification = releaseDateInfo.release_dates[0].certification;
+            }
 
-                // show film in ui
-                UICtrl.showFilm(film);
+            // Callback
+            callback(film);
+        });
+    }
 
-                // add event listener to add btn
-                document.getElementById(UICtrl.getSelectors().filmSearch.filmSearchAddBtn).onclick = () => {
-                    // add film to watchlist
-                    addFilmClick(film, e);
-                };
-            })
-        })
+    const showFilm = film => {
+        // show film in ui
+        UICtrl.showFilm(film);
+
+        // add event listener to add btn
+        document.getElementById(UICtrl.getSelectors().filmSearch.filmSearchAddBtn).onclick = e => {
+            // add film to watchlist
+            addFilmClick(film, e);
+        };
     }
 
     const addFilmClick = (film, e) => {
@@ -506,7 +554,6 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
                 const closeBtn = e.target.parentElement.previousElementSibling.firstElementChild;
                 closeBtn.addEventListener("click", closeFilmDetailsClick);
             })
-
     }
 
     // Close cinema film details modal
@@ -526,7 +573,8 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
     return {
         init,
         mouseenterWatchlistItem,
-        mouseleaveWatchlistItem
+        mouseleaveWatchlistItem,
+        filmSearchDropdownClick
     }
 
 })(APICtrl, StorageCtrl, UICtrl);
