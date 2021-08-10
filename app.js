@@ -214,9 +214,9 @@ const UICtrl = (() => {
                     <img src="https://image.tmdb.org/t/p/original/${film.poster_path}" class="card-img h-100" alt="...">
                     <div class="card-img-overlay">
                         <h3 class="card-title">${film.title}</h3>
-                        <div class="cinema-film-btns">
-                            <button class="btn btn-primary">Details</button>
-                            <button class="btn btn-primary cinema-add-btn text-nowrap">Add to Watchlist</button>
+                        <div class="cinema-film-btns d-flex justify-content-center flex-wrap">
+                            <button class="btn btn-info m-1">Details</button>
+                            <button class="btn btn-secondary cinema-add-btn text-nowrap m-1">Add to Watchlist</button>
                         </div>
                     </div>
                 </div>
