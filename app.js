@@ -81,10 +81,20 @@ const StorageCtrl = (() => {
         localStorage.setItem("watchlist", JSON.stringify(watchlist));
     }
 
+    const watchlistCheckDuplicate = film => {
+        let watchlist = StorageCtrl.getWatchlistFromLocalStorage();
+        let films = watchlist.map(film => {
+            return film.title;
+        })
+
+        return films.includes(film.title);
+    }
+
     return {
         addFilmToLocalStorage,
         getWatchlistFromLocalStorage,
-        deleteFilmFromLocalStorage
+        deleteFilmFromLocalStorage,
+        watchlistCheckDuplicate
     }
 })();
 
@@ -404,6 +414,9 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
             const film = results[0];
             consolidateFilmDetails(film, showFilm);
         })
+        .catch(err => {
+            console.log("Film not found");
+        })
     }
 
     // Film selected from dropdown
@@ -469,10 +482,17 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
     }
 
     const addFilmClick = (film, e) => {
-        // add film to local storage
-        StorageCtrl.addFilmToLocalStorage(film);
-        // refresh watchlist with new film
-        UICtrl.populateWatchlist();
+        // check if film is already in watchlist
+        const duplicate = StorageCtrl.watchlistCheckDuplicate(film);
+
+        if(!duplicate){
+            // add film to local storage
+            StorageCtrl.addFilmToLocalStorage(film);
+            // refresh watchlist with new film
+            UICtrl.populateWatchlist();
+        } else {
+            console.log("DUPE");
+        }
 
         if(e.target.closest("li") !== null && e.target.closest("li").classList.contains("cinema-film-details")){
             UICtrl.closeCinemaFilmDetails(e);
