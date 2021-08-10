@@ -1,16 +1,73 @@
+@import url("https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap");
+
+:root {
+	--primary-color: #55ffff;
+	--secondary-color: #66e646;
+	--tertiary-color: #ffff77;
+	--light-color: #fff;
+}
+
 body {
-	background-color: #454851;
+	/* background-color: #454851; */
+	background-color: #0e2a47;
+}
+
+header {
+	background-image: url(/BG-IMG.svg);
 }
 
 main {
 	display: flex;
 }
 
+h1 {
+	font-family: "Abril Fatface", cursive;
+}
+
 ul {
 	padding: 0;
 }
 
-/* Layout */
+/* Header */
+.watchlist-open #watchlist-btn {
+	display: none;
+}
+
+.nav-btns button:nth-of-type(2) {
+	color: var(--primary-color);
+	border: 1px solid var(--primary-color);
+	font-weight: 500;
+}
+
+.nav-btns button:first-of-type {
+	color: var(--secondary-color);
+	border: 1px solid var(--secondary-color);
+	font-weight: 500;
+}
+
+.nav-btns button:last-of-type {
+	color: var(--tertiary-color);
+	border: 1px solid var(--tertiary-color);
+	font-weight: 500;
+}
+
+.nav-btns button:hover {
+	color: #454851;
+}
+
+.nav-btns button:nth-of-type(2):hover {
+	background-color: var(--primary-color);
+}
+
+.nav-btns button:first-of-type:hover {
+	background-color: var(--secondary-color);
+}
+
+.nav-btns button:last-of-type:hover {
+	background-color: var(--tertiary-color);
+}
+
+/* Main layout */
 .page-layout {
 	overflow: hidden;
 }
@@ -21,10 +78,16 @@ ul {
 	max-height: calc(100vh - 250px);
 	table-layout: fixed;
 	width: 100%;
+	box-shadow: 0px 5px 10px 2.5px #0d1c2c;
 }
 
 .watchlist table thead {
 	width: inherit;
+}
+
+.watchlist table thead tr th {
+	background-color: #164475;
+	color: #fff;
 }
 
 .watchlist table thead tr th:nth-of-type(2) {
@@ -62,31 +125,10 @@ ul {
 	transform: scale(1.2);
 }
 
-.add-films-btns button:first-of-type {
-	color: #9d8df1;
-	border: 1px solid #9d8df1;
-	font-weight: 500;
-}
-.add-films-btns button:first-of-type:hover {
-	background-color: #9d8df1;
-	color: #fff;
-}
-
-.add-films-btns button:last-of-type {
-	color: #1cfeba;
-	border: 1px solid #1cfeba;
-	font-weight: 500;
-}
-.add-films-btns button:last-of-type:hover {
-	background-color: #1cfeba;
-	color: #454851;
-}
-
 /* Film Search Section */
 
 .film-search .film-search-add-btn {
-	background-color: #9d8df1;
-	color: #fff;
+	background-color: var(--secondary-color);
 	width: fit-content;
 }
 
@@ -95,8 +137,8 @@ ul {
 }
 
 .movie-input:focus {
-	outline: #9d8df1;
-	box-shadow: 0px 0px 5px 1px #9d8df1;
+	outline: var(--secondary-color);
+	box-shadow: 0px 0px 5px 1px var(--secondary-color);
 }
 
 .film-results-dropdown {
@@ -105,7 +147,7 @@ ul {
 	z-index: 1;
 	width: 100%;
 	border: 1px solid rgb(160, 160, 160);
-	border: 1px solid #9d8df1;
+	border: 1px solid var(--secondary-color);
 }
 
 .film-results-dropdown:hover {
@@ -117,7 +159,7 @@ ul {
 }
 
 .film-results-dropdown .dropdown-item:hover {
-	background-color: #9d8df1;
+	background-color: var(--secondary-color);
 }
 
 .dropdown-item {
@@ -134,14 +176,23 @@ ul {
 	background-color: rgba(0, 0, 0, 0.5);
 }
 
-/* DOM Styles */
+.cinema-film-btns button:first-child {
+	background-color: #fff;
+}
+
+.cinema-film-btns button:last-child {
+	background-color: var(--tertiary-color);
+}
+
+.cinema-film-btns button:hover {
+	filter: brightness(90%);
+}
+
+/* --------- DOM STYLES ----------- */
+/* Watchlist */
 .table-empty {
 	display: table;
 	width: inherit;
-}
-
-.list-aside .add-films-btns {
-	display: none;
 }
 
 .cinema-open table {
@@ -160,12 +211,22 @@ ul {
 	display: none;
 }
 
+/* Film Search */
+.film-search-open #search-film-btn {
+	display: none;
+}
+
 .movie-info-year {
 	margin-left: 10px;
 	font-style: italic;
 	font-weight: 400;
 	color: grey;
 	font-size: 16px;
+}
+
+/* Cinema */
+.cinema-open #cinema-releases-btn {
+	display: none;
 }
 
 .cinema-film-details {
@@ -209,7 +270,7 @@ ul {
 	z-index: -1;
 }
 
-/* Media Queries */
+/* -------- MEDIA QUERIES ---------- */
 @media only screen and (max-width: 760px) {
 	#movie-info .card .row div:first-child {
 		height: 300px;

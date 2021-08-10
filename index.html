@@ -13,8 +13,15 @@
 </head>
 
 <body>
-    <header class="container text-center py-4">
-        <h1 class="display-3 text-light">Movie Watchlist</h1>
+    <header class="text-center pt-4 pb-1 mb-4">
+        <div class="container">
+            <h1 class="display-3 text-light mb-5">Movie Watchlist</h1>
+            <div id="nav-btns" class="nav-btns mb-3 watchlist-open">
+                <button class="btn btn-outline" id="search-film-btn"><i class="fas fa-search"></i> Search Film</button>
+                <button class="btn btn-outline" id="watchlist-btn"><i class="fas fa-tv"></i> Watchlist</button>
+                <button class="btn btn-outline" id="cinema-releases-btn"><i class="fas fa-film"></i> Cinema Releases</button>
+            </div>
+        </div>
     </header>
     <main>
         <div class="container-lg">
@@ -30,12 +37,8 @@
                 </section>
                 <!-- WATCHLIST -->
                 <section id="watchlist" class="watchlist container col">
-                    <div class="add-films-btns mb-3">
-                        <button class="btn btn-outline" id="search-film-btn"><i class="fas fa-search"></i> Search Film</button>
-                        <button class="btn btn-outline" id="cinema-releases-btn"><i class="fas fa-film"></i> Cinema Releases</button>
-                    </div>
                     <table id="watchlist-table" class="table table-light align-middle d-block overflow-auto">
-                        <thead class="table-dark sticky-top">
+                        <thead class="sticky-top">
                             <tr>
                                 <th scope="col">Poster</th>
                                 <th scope="col">Film</th>

@@ -90,6 +90,12 @@ const StorageCtrl = (() => {
 
 const UICtrl = (() => {
     const UISelectors = {
+        header: {
+            navBtns: "nav-btns",
+            searchFilmBtn: "search-film-btn",
+            watchlistBtn: "watchlist-btn",
+            cinemaReleasesBtn: "cinema-releases-btn"
+        },
         watchlist: {
             watchlist: "watchlist",
             watchlistTable: "watchlist-table",
@@ -97,7 +103,6 @@ const UICtrl = (() => {
             deleteBtn: "delete-btn",
         },
         filmSearch: {
-            searchFilmBtn: "search-film-btn",
             filmSearchAddBtn: "film-search-add-btn",
             filmSearch: "film-search",
             movieInfo: "movie-info",
@@ -105,7 +110,6 @@ const UICtrl = (() => {
             dropdown: "film-results-dropdown",
         },
         cinemaFilms: {
-            cinemaReleasesBtn: "cinema-releases-btn",
             cinemaFilmBtns: ".cinema-film-btns",
             cinemaFilms: "cinema-films",
             cinemaFilmsList: "cinema-films-list"
@@ -142,17 +146,16 @@ const UICtrl = (() => {
 
     const openFilmSearch = () => {
         const watchlist = document.getElementById(UISelectors.watchlist.watchlist);
-        const watchlistTable = document.getElementById(UISelectors.watchlist.watchlistTable);
+        const cinemaFilms = document.getElementById(UISelectors.cinemaFilms.cinemaFilms);
         const filmSearch = document.getElementById(UISelectors.filmSearch.filmSearch);
-        const backBtn = document.createElement("button");
+        const navBtns = document.getElementById(UISelectors.header.navBtns);
 
+        navBtns.classList.remove("watchlist-open", "cinema-open");
+        navBtns.classList.add("film-search-open");
+        
         filmSearch.classList.replace("d-none", "d-flex");
+        cinemaFilms.classList.replace("d-block", "d-none");
         watchlist.classList.add("list-aside");
-
-        backBtn.innerHTML = `Back to watchlist <i class="far fa-arrow-alt-circle-right"></i>`;
-        backBtn.classList = "btn text-light";
-        backBtn.id = "back-btn";
-        watchlist.insertBefore(backBtn, watchlistTable);
     }
 
     const showFilm = (film) => {
@@ -186,20 +189,17 @@ const UICtrl = (() => {
     }
 
     const openCinemaReleases = () => {
-        const cinemaFilms = document.getElementById(UISelectors.cinemaFilms.cinemaFilms)
+        const cinemaFilms = document.getElementById(UISelectors.cinemaFilms.cinemaFilms);
+        const filmSearch = document.getElementById(UISelectors.filmSearch.filmSearch);
         const watchlist = document.getElementById(UISelectors.watchlist.watchlist);
-        const watchlistTable = document.getElementById(UISelectors.watchlist.watchlistTable);
-        const backBtn = document.createElement("button");
+        const navBtns = document.getElementById(UISelectors.header.navBtns);
+
+        navBtns.classList.remove("watchlist-open", "film-search-open");
+        navBtns.classList.add("cinema-open");
 
         cinemaFilms.classList.replace("d-none", "d-block");
+        filmSearch.classList.replace("d-flex", "d-none");
         watchlist.classList.add("list-aside", "cinema-open");
-
-        backBtn.innerHTML = `<i class="far fa-arrow-alt-circle-left"></i> Back to watchlist`;
-        backBtn.classList = "btn text-light";
-        backBtn.id = "back-btn";
-        watchlist.insertBefore(backBtn, watchlistTable);
-
-
     }
 
     const showCinemaFilms = (films) => {
@@ -215,8 +215,8 @@ const UICtrl = (() => {
                     <div class="card-img-overlay">
                         <h3 class="card-title">${film.title}</h3>
                         <div class="cinema-film-btns d-flex justify-content-center flex-wrap">
-                            <button class="btn btn-info m-1">Details</button>
-                            <button class="btn btn-secondary cinema-add-btn text-nowrap m-1">Add to Watchlist</button>
+                            <button class="btn m-1">Details</button>
+                            <button class="btn cinema-add-btn text-nowrap m-1">Add to Watchlist</button>
                         </div>
                     </div>
                 </div>
@@ -314,7 +314,6 @@ const UICtrl = (() => {
         filmSearch.classList.replace("d-flex", "d-none");
         cinemaFilms.classList.replace("d-block", "d-none");
         watchlist.classList.remove("list-aside", "cinema-open");
-        watchlist.firstElementChild.nextElementSibling.remove();
     }
 
     const checkEmptyTable = () => {
@@ -369,16 +368,16 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         const UISelectors = UICtrl.getSelectors();
 
         // Open film search
-        document.getElementById(UISelectors.filmSearch.searchFilmBtn).addEventListener("click", searchFilmClick);
+        document.getElementById(UISelectors.header.searchFilmBtn).addEventListener("click", searchFilmClick);
 
         //Close film search
-        document.getElementById(UISelectors.watchlist.watchlist).addEventListener("click", backClick);
+        document.getElementById(UISelectors.header.watchlistBtn).addEventListener("click", openWatchlist);
         
         //Movie input event
         document.getElementById(UISelectors.filmSearch.movieInput).addEventListener("keyup", inputMovieKeyup);
         
         //Open cinema release
-        document.getElementById(UISelectors.cinemaFilms.cinemaReleasesBtn).addEventListener("click", cinemaReleasesClick);
+        document.getElementById(UISelectors.header.cinemaReleasesBtn).addEventListener("click", cinemaReleasesClick);
     }
 
     // Film Search
@@ -502,11 +501,11 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         }
     }
 
-    const backClick = (e) => {
-        if(e.target.id === "back-btn"){
-            // close film search / cinema releases
-            UICtrl.closeSearches();
-        }
+    const openWatchlist = () => {
+        const navBtns = document.getElementById(UICtrl.getSelectors().header.navBtns);
+        navBtns.classList.remove("cinema-open", "film-search-open");
+        navBtns.classList.add("watchlist-open");
+        UICtrl.closeSearches();
     }
 
     // Cinema Releases
