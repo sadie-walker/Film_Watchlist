@@ -126,6 +126,9 @@ ul {
 }
 
 /* Film Search Section */
+.film-search h2 {
+	color: var(--secondary-color);
+}
 
 .film-search .film-search-add-btn {
 	background-color: var(--secondary-color);
@@ -167,6 +170,10 @@ ul {
 }
 
 /* Cinema Listing Section*/
+.cinema-films h2 {
+	color: var(--tertiary-color);
+}
+
 .card-img-overlay {
 	visibility: hidden;
 }
