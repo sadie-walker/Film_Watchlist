@@ -354,6 +354,17 @@ const UICtrl = (() => {
         dropdown.appendChild(ul);
     }
 
+    const showAlert = (alertType, alertHTML) => {
+        const header = document.querySelector("header");
+        const alert = document.createElement("div");
+        alert.classList = `container alert ${alertType} p-2 text-center`;
+        alert.innerHTML = alertHTML;
+        header.insertAdjacentElement("afterend", alert);
+        setTimeout(function(){
+            alert.remove();
+        }, 3000);
+    };
+
     return {
         getSelectors,
         populateWatchlist,
@@ -368,7 +379,8 @@ const UICtrl = (() => {
         getLocationList,
         closeCinemaFilmDetails,
         checkEmptyTable,
-        createDropdownMenu
+        createDropdownMenu,
+        showAlert
     }
 })();
 
@@ -490,8 +502,9 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
             StorageCtrl.addFilmToLocalStorage(film);
             // refresh watchlist with new film
             UICtrl.populateWatchlist();
+            UICtrl.showAlert("alert-success", `<strong>${film.title}</strong> has been added to your watchlist.`);
         } else {
-            console.log("DUPE");
+            UICtrl.showAlert("alert-warning", `<strong>${film.title}</strong> is already in your watchlist.`);
         }
 
         if(e.target.closest("li") !== null && e.target.closest("li").classList.contains("cinema-film-details")){
@@ -518,6 +531,10 @@ const App = ((APICtrl, StorageCtrl, UICtrl) => {
         if(e.target.id === UICtrl.getSelectors().watchlist.deleteBtn){
             StorageCtrl.deleteFilmFromLocalStorage(e);
             UICtrl.populateWatchlist();
+            
+            let filmTitle = e.target.closest("tr").firstElementChild.nextElementSibling.innerText;
+            filmTitle = filmTitle.replace(/\ \(([^)]+)\)/, "");
+            UICtrl.showAlert("alert-danger", `<strong>${filmTitle}</strong> has been removed from your watchlist.`);
         }
     }
 
