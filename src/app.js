@@ -12,8 +12,8 @@ const loadEventListeners = () => {
     //Close film search
     document.getElementById(UISelectors.header.watchlistBtn).addEventListener("click", openWatchlist);
     
-    //Movie input event
-    document.getElementById(UISelectors.filmSearch.movieInput).addEventListener("keyup", inputMovieKeyup);
+    //film input event
+    document.getElementById(UISelectors.filmSearch.filmInput).addEventListener("keyup", inputFilmKeyup);
     
     //Open cinema release
     document.getElementById(UISelectors.header.cinemaReleasesBtn).addEventListener("click", cinemaReleasesClick);
@@ -24,15 +24,15 @@ const searchFilmClick = () => {
     UI.openFilmSearch();
 }
 
-const inputMovieKeyup = () => {
-    const movieSearch = document.getElementById(UI.getSelectors().filmSearch.movieInput).value;
-    const movieQuery = movieSearch.replace(" ", "+");
+const inputFilmKeyup = () => {
+    const filmSearch = document.getElementById(UI.getSelectors().filmSearch.filmInput).value;
+    const filmQuery = filmSearch.replace(" ", "+");
 
     // get film search results
-    API.getMovieData(movieQuery)
+    API.getFilmData(filmQuery)
     .then(data => {
         // Show dropdown list of film results
-        const regex = new RegExp(`^${movieQuery}`, "i");
+        const regex = new RegExp(`^${filmQuery}`, "i");
         const results = data.filter(film => {
             return regex.test(film.title);
         })
@@ -44,19 +44,19 @@ const inputMovieKeyup = () => {
         consolidateFilmDetails(film, showFilm);
     })
     .catch(err => {
-        console.log("Film not found");
+        console.log("Film not found " + err );
     })
 }
 
 // Film selected from dropdown
 export const filmSearchDropdownClick = film => {
-    document.getElementById(UI.getSelectors().filmSearch.movieInput).value = film.title;
+    document.getElementById(UI.getSelectors().filmSearch.filmInput).value = film.title;
     consolidateFilmDetails(film, showFilm);   
 }
 
 // Set film location, film genres & certifcation
 const consolidateFilmDetails = (film, callback) => {
-    Promise.all([API.getMovieLocation(film), API.getGenreIDs(), API.getFilmCertification(film)])
+    Promise.all([API.getFilmLocation(film), API.getGenreIDs(), API.getFilmCertification(film)])
     .then(res => {
         // Set film location
         if(res[0].results.GB === undefined) {
@@ -124,6 +124,7 @@ const addFilmClick = (film, e) => {
         UI.showAlert("alert-warning", `<strong>${film.title}</strong> is already in your watchlist.`);
     }
 
+    // close film details once added
     if(e.target.closest("li") !== null && e.target.closest("li").classList.contains("cinema-film-details")){
         UI.closeCinemaFilmDetails(e);
     }
@@ -146,9 +147,12 @@ export const mouseleaveWatchlistItem = (e) => {
 
 const deleteBtnClicked = (e) => {
     if(e.target.id === UI.getSelectors().watchlist.deleteBtn){
+        // delete film
         Storage.deleteFilmFromLocalStorage(e);
+        // update watchlist
         UI.populateWatchlist(Storage.getWatchlistFromLocalStorage());
         
+        // show alert for deletion
         let filmTitle = e.target.closest("tr").firstElementChild.nextElementSibling.innerText;
         filmTitle = filmTitle.replace(/\ \(([^)]+)\)/, "");
         UI.showAlert("alert-danger", `<strong>${filmTitle}</strong> has been removed from your watchlist.`);

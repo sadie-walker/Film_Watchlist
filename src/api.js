@@ -1,13 +1,13 @@
 const apiKey = "8ed514450ca5d54b5bc425d6d68cc9f8";
 
-export async function getMovieData(title) {
+export async function getFilmData(title) {
     const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${title}`);
     const data = await res.json();
     return data.results;
 }
 
-export async function getMovieLocation(movie) {
-    const res = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/watch/providers?api_key=${apiKey}`);
+export async function getFilmLocation(film) {
+    const res = await fetch(`https://api.themoviedb.org/3/movie/${film.id}/watch/providers?api_key=${apiKey}`);
     const data = await res.json();
     return data;
 }

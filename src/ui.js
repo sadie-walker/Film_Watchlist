@@ -16,8 +16,8 @@ const UISelectors = {
     filmSearch: {
         filmSearchAddBtn: "film-search-add-btn",
         filmSearch: "film-search",
-        movieInfo: "movie-info",
-        movieInput: "movie-input",
+        filmInfo: "film-info",
+        filmInput: "film-input",
         dropdown: "film-results-dropdown",
     },
     cinemaFilms: {
@@ -69,7 +69,7 @@ export const openFilmSearch = () => {
 }
 
 export const showFilm = (film) => {
-    const div = document.getElementById(UISelectors.filmSearch.movieInfo);
+    const div = document.getElementById(UISelectors.filmSearch.filmInfo);
     const date = new Date(film.release_date);
 
     div.classList.replace("d-none", "d-flex");
@@ -83,7 +83,7 @@ export const showFilm = (film) => {
                     <div class="card-body">
                         <h5 class="card-title">${film.title} 
                             <span>(${film.certification})</span>
-                            <em class="movie-info-year"> (${date.getFullYear()})</em>
+                            <em class="film-info-year"> (${date.getFullYear()})</em>
                         </h5>
                         <p class="card-text">${film.overview}</p>
                                 <p class="card-text">${getGenres(film)}
