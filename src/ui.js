@@ -136,7 +136,13 @@ export const showCinemaFilms = (films) => {
 }
 
 export const openCinemaFilmDetails = (film, e) => {
-    window.scrollY = 
+    // add bg overlay
+    const list = document.getElementById(UISelectors.cinemaFilms.cinemaFilmsList)
+    list.classList.add("film-details-open");
+
+    // remove scroll
+    document.querySelector("body").style.overflow = "hidden";
+
     // open details modal
     e.target.closest("li").classList.add("cinema-film-details");
 
@@ -206,6 +212,13 @@ const getLocationList = (film) => {
 }
 
 export const closeCinemaFilmDetails = (e) => {
+    // remove bg overlay
+    const list = document.getElementById(UISelectors.cinemaFilms.cinemaFilmsList)
+    list.classList.remove("film-details-open");
+
+    // scroll enabled
+    document.querySelector("body").style.overflow = "auto";
+
     // remove modal layout
     e.target.closest("li").classList.remove("cinema-film-details");
 
