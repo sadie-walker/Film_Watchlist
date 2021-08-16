@@ -136,11 +136,12 @@ export const showCinemaFilms = (films) => {
 }
 
 export const openCinemaFilmDetails = (film, e) => {
+    window.scrollY = 
     // open details modal
-    e.target.closest("li").classList.add("cinema-film-details", "flex-row");
+    e.target.closest("li").classList.add("cinema-film-details");
 
     // Change card type
-    e.target.closest(".card"). classList.add("flex-row");
+    e.target.closest(".card"). classList.add("flex-md-row");
     const body = e.target.closest(".card-img-overlay");
     body.classList = "card-body d-flex flex-column align-items-center justify-content-between";
 
@@ -206,7 +207,7 @@ const getLocationList = (film) => {
 
 export const closeCinemaFilmDetails = (e) => {
     // remove modal layout
-    e.target.closest("li").classList.remove("cinema-film-details", "flex-row");
+    e.target.closest("li").classList.remove("cinema-film-details");
 
     // change card type
     e.target.closest(".card"). classList.remove("flex-row");

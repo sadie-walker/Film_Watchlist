@@ -139,7 +139,7 @@ ul {
 	position: relative;
 }
 
-.movie-input:focus {
+.film-input:focus {
 	outline: var(--secondary-color);
 	box-shadow: 0px 0px 5px 1px var(--secondary-color);
 }
@@ -157,7 +157,7 @@ ul {
 	display: block;
 }
 
-.movie-input:valid:focus + .film-results-dropdown {
+.film-input:valid:focus + .film-results-dropdown {
 	display: block;
 }
 
@@ -223,7 +223,7 @@ ul {
 	display: none;
 }
 
-.movie-info-year {
+.film-info-year {
 	margin-left: 10px;
 	font-style: italic;
 	font-weight: 400;
@@ -279,12 +279,12 @@ ul {
 
 /* -------- MEDIA QUERIES ---------- */
 @media only screen and (max-width: 760px) {
-	#movie-info .card .row div:first-child {
+	#film-info .card .row div:first-child {
 		height: 300px;
 		overflow: hidden;
 	}
 
-	#movie-info .card .row div:first-child img {
+	#film-info .card .row div:first-child img {
 		object-fit: fill;
 		object-position: 0 -100px;
 	}

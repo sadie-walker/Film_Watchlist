@@ -37,8 +37,7 @@ const inputFilmKeyup = () => {
             return regex.test(film.title);
         })
         results.splice(5);
-        UI.createDropdownMenu(results);
-
+        UI.createDropdownMenu(results);    
         // Get certification, location & genres
         const film = results[0];
         consolidateFilmDetails(film, showFilm);
