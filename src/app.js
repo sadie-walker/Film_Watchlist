@@ -32,12 +32,13 @@ const inputFilmKeyup = () => {
     API.getFilmData(filmQuery)
     .then(data => {
         // Show dropdown list of film results
-        const regex = new RegExp(`^${filmQuery}`, "i");
+        const regex = new RegExp(`^${filmSearch}`, "i");
         const results = data.filter(film => {
             return regex.test(film.title);
         })
         results.splice(5);
         UI.createDropdownMenu(results);    
+        
         // Get certification, location & genres
         const film = results[0];
         consolidateFilmDetails(film, showFilm);
