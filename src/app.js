@@ -38,10 +38,13 @@ const inputFilmKeyup = () => {
         })
         results.splice(5);
         UI.createDropdownMenu(results);    
-        
+
         // Get certification, location & genres
         const film = results[0];
-        consolidateFilmDetails(film, showFilm);
+        consolidateFilmDetails(film)
+        .then(filmInfo => {
+            showFilm(filmInfo);
+        });
     })
     .catch(err => {
         console.log("Film not found " + err );
@@ -51,52 +54,57 @@ const inputFilmKeyup = () => {
 // Film selected from dropdown
 export const filmSearchDropdownClick = film => {
     document.getElementById(UI.getSelectors().filmSearch.filmInput).value = film.title;
-    consolidateFilmDetails(film, showFilm);   
+    consolidateFilmDetails(film)
+        .then(filmInfo => {
+            showFilm(filmInfo);
+        });
 }
 
 // Set film location, film genres & certifcation
-const consolidateFilmDetails = (film, callback) => {
-    Promise.all([API.getFilmLocation(film), API.getGenreIDs(), API.getFilmCertification(film)])
-    .then(res => {
-        // Set film location
-        if(res[0].results.GB === undefined) {
-            film.location = "*Unavailable for streaming*";
-        } else {
-            const locations = res[0].results.GB;
-            film.location = "";
-    
-            if(locations.flatrate === undefined) {
+const consolidateFilmDetails = async (film) => {
+    await Promise.all([API.getFilmLocation(film), API.getGenreIDs(), API.getFilmCertification(film)])
+        .then(res => {
+            // Set film location
+            if(res[0].results.GB === undefined) {
                 film.location = "*Unavailable for streaming*";
             } else {
-                locations.flatrate.forEach((provider, index) => {
-                    film.location += `${provider.provider_name}`;
+                const locations = res[0].results.GB;
+                film.location = "";
         
-                    if(index < locations.flatrate.length-1){
-                        film.location += ",   ";
-                    }
-                })
+                if(locations.flatrate === undefined) {
+                    film.location = "*Unavailable for streaming*";
+                } else {
+                    locations.flatrate.forEach((provider, index) => {
+                        film.location += `${provider.provider_name}`;
+            
+                        if(index < locations.flatrate.length-1){
+                            film.location += ",   ";
+                        }
+                    })
+                }
             }
-        }
 
-        // Set film genres
-        if(res[1].genres !== undefined){
-            const genres = film.genre_ids.map(id => {
-                return res[1].genres.find(item => item.id === id).name;
-            })
-            film.genres = genres;
-        }
+            // Set film genres
+            if(res[1].genres !== undefined){
+                const genres = film.genre_ids.map(id => {
+                    return res[1].genres.find(item => item.id === id).name;
+                })
+                film.genres = genres;
+            }
 
-        // Set film certification
-        if(res[2].results.GB !== undefined){
+            // Set film certification
             const releaseDateInfo = res[2].results.find(obj => {
                 return obj.iso_3166_1 === "GB";
             });
-            film.certification = releaseDateInfo.release_dates[0].certification;
-        }
+            
+            if(releaseDateInfo !== undefined){
+                film.certification = releaseDateInfo.release_dates[0].certification;
+            } else {
+                film.certification = "";
+            }
+        });
 
-        // Callback
-        callback(film);
-    });
+    return film;
 }
 
 const showFilm = film => {
@@ -172,7 +180,7 @@ const cinemaReleasesClick = () => {
     UI.openCinemaReleases();
     // get films from API
     API.getCinemaFilms()
-        .then(data => {                
+        .then(data => {               
             // show films in UI
             UI.showCinemaFilms(data);
 
@@ -197,20 +205,15 @@ const cinemaReleasesClick = () => {
 }
 
 // Open cinema film details modal
-const cinemaFilmDetailsClick = (film, e) => {
-    API.getGenreIDs()
-        .then(data => {
-            // Add genres to film data
-            const genres = film.genre_ids.map(id => {
-                return data.genres.find(item => item.id === id).name;
-            })
-            film.genres = genres;
-            // open film details
-            UI.openCinemaFilmDetails(film, e);
+const cinemaFilmDetailsClick =  (film, e) => {
+    consolidateFilmDetails(film)
+        .then(film => {
+            UI.openCinemaFilmDetails(film, e)
+        
             // add event listener to close btn
             const closeBtn = e.target.parentElement.previousElementSibling.firstElementChild;
             closeBtn.addEventListener("click", closeFilmDetailsClick);
-        })
+        });
 }
 
 // Close cinema film details modal

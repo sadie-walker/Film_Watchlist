@@ -82,7 +82,7 @@ export const showFilm = (film) => {
                 <div class="col-md-6 col-xxl-8">
                     <div class="card-body">
                         <h5 class="card-title">${film.title} 
-                            <span>(${film.certification})</span>
+                            ${getCertification(film)}
                             <em class="film-info-year"> (${date.getFullYear()})</em>
                         </h5>
                         <p class="card-text">${film.overview}</p>
@@ -121,7 +121,7 @@ export const showCinemaFilms = (films) => {
         li.classList = "col-5 col-lg-4";
         li.innerHTML = `
             <div class="card bg-dark text-white h-100">
-                <img src="https://image.tmdb.org/t/p/original/${film.poster_path}" class="card-img h-100" alt="...">
+                <img src="https://image.tmdb.org/t/p/original/${film.poster_path}" class="card-img h-100 cinema-film-poster" alt="...">
                 <div class="card-img-overlay">
                     <h3 class="card-title">${film.title}</h3>
                     <div class="cinema-film-btns d-flex justify-content-center flex-wrap">
@@ -160,14 +160,17 @@ export const openCinemaFilmDetails = (film, e) => {
         <p>
             Release Date: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}
         </p>
-        <p>Age Rating: PG</p>
         <div>
-            Genre: 
-                ${getGenres(film)}
+            <p class="d-inline-block">Age Rating:</p>
+            ${getCertification(film)}
+        </div>
+        <div>
+            <p class="d-inline-block">Genre:</p>
+            ${getGenres(film)}
         </div>
         <div> 
-            Rating: 
-                ${getStarRating(film)}
+            <p class="d-inline-block">Rating:</p>
+            ${getStarRating(film)}
         </div>
     `;
     div.className = "card-text";
@@ -208,6 +211,28 @@ const getLocationList = (film) => {
         return ul;
     } else {
         return arr[0];
+    }
+}
+
+const getCertification = (film) => {
+    const cert = film.certification;
+    console.log(cert);
+
+    switch(cert){
+        case undefined || "":
+            return ``;
+        case "U":
+            return `<img src="/imgs/BBFC_U.svg" alt="U" class="age-rating">`;
+        case "PG":
+            return `<img src="/imgs/BBFC_PG.svg" alt="PG" class="age-rating">`;
+        case "12A":
+            return `<img src="/imgs/BBFC_12A.svg" alt="12A" class="age-rating">`;
+        case "12":
+            return `<img src="/imgs/BBFC_12.svg" alt="12" class="age-rating">`;
+        case "15":
+            return `<img src="/imgs/BBFC_15.svg" alt="15" class="age-rating">`;
+        case "18":
+            return `<img src="/imgs/BBFC_18.svg" alt="18" class="age-rating">`;
     }
 }
 
