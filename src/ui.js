@@ -286,7 +286,7 @@ export const createDropdownMenu = results => {
     results.forEach(film => {
         const li = document.createElement("li");
         li.classList = "dropdown-item p-2";
-        li.innerText = film.title;
+        li.innerHTML = `${film.title} <small class="text-secondary">(${new Date(film.release_date).getFullYear()})</small>`;
         li.addEventListener("click", function(){
             App.filmSearchDropdownClick(film);
         });
