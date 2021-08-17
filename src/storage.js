@@ -34,11 +34,11 @@ export const deleteFilmFromLocalStorage = e => {
     localStorage.setItem("watchlist", JSON.stringify(watchlist));
 }
 
-export const watchlistCheckDuplicate = film => {
+export const watchlistCheckDuplicate = newFilm => {
     let watchlist = getWatchlistFromLocalStorage();
-    let films = watchlist.map(film => {
-        return film.title;
-    })
 
-    return films.includes(film.title);
+    const dupe =  watchlist.some(film => {
+        return film.title === newFilm.title && film.release_date === newFilm.release_date;
+    })
+    return dupe;
 }

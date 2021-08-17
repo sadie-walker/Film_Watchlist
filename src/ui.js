@@ -40,7 +40,7 @@ export const populateWatchlist = (watchlist) => {
             <td class="p-0">
                 <img src="https://image.tmdb.org/t/p/original/${film.poster_path}">
             </td>
-            <td>${film.title} (${new Date(film.release_date).getFullYear()})</td>
+            <td>${film.title} <small class="text-secondary">(${new Date(film.release_date).getFullYear()})</small></td>
             <td class="watchlist-desc pe-4"><div>${film.overview}</div></td>
             <td>
                 <div class="d-flex align-items-center justify-content-between">${getLocationList(film)}</div>
