@@ -169,6 +169,10 @@ ul {
 	cursor: pointer;
 }
 
+.film-search-poster {
+	object-fit: cover;
+}
+
 /* Cinema Listing Section*/
 .cinema-films h2 {
 	color: var(--tertiary-color);
@@ -218,13 +222,16 @@ ul {
 	display: none;
 }
 
+.watchlist table thead tr th:nth-of-type(4) {
+	width: 50%;
+}
+
 /* Film Search */
 .film-search-open #search-film-btn {
 	display: none;
 }
 
 .film-info-year {
-	/* margin-left: 10px; */
 	font-style: italic;
 	font-weight: 400;
 	color: grey;
@@ -282,13 +289,11 @@ ul {
 
 /* -------- MEDIA QUERIES ---------- */
 @media only screen and (max-width: 768px) {
-	#film-info .card .row div:first-child {
+	#film-info .card .row > div:first-of-type {
 		height: 300px;
-		overflow: hidden;
 	}
 
-	#film-info .card .row div:first-child img {
-		object-fit: fill;
+	#film-info .card .row > div:first-of-type img {
 		object-position: 0 -100px;
 	}
 
@@ -297,7 +302,7 @@ ul {
 		display: none;
 	}
 
-	.list-aside table {
+	.list-aside.cinema-open table {
 		display: none !important;
 	}
 
@@ -325,9 +330,19 @@ ul {
 		width: 20%;
 	}
 	.watchlist table thead tr th:nth-of-type(3) {
-		width: 50%;
+		width: 45%;
 	}
 	.watchlist table thead tr th:nth-of-type(4) {
-		width: 20%;
+		width: 25%;
+	}
+
+	.film-search-poster {
+		border-radius: 4px 0px 0px 4px !important;
+	}
+}
+
+@media only screen and (max-width: 992px) {
+	.list-aside:not(.cinema-open) table {
+		display: none !important;
 	}
 }

@@ -66,6 +66,7 @@ export const openFilmSearch = () => {
     filmSearch.classList.replace("d-none", "d-flex");
     cinemaFilms.classList.replace("d-block", "d-none");
     watchlist.classList.add("list-aside");
+    watchlist.classList.remove("cinema-open");
 }
 
 export const showFilm = (film) => {
@@ -74,13 +75,13 @@ export const showFilm = (film) => {
 
     div.classList.replace("d-none", "d-flex");
     div.innerHTML = `
-        <div class="card">
+        <div class="card mb-3">
             <div class="row">
                 <div class="col-md-6 col-xxl-4">
-                    <img src="https://image.tmdb.org/t/p/original/${film.poster_path}" class="img-fluid rounded" alt="...">
+                    <img src="https://image.tmdb.org/t/p/original/${film.poster_path}" class="rounded-top h-100 w-100 film-search-poster" alt="${film.title} poster">
                 </div>
                 <div class="col-md-6 col-xxl-8">
-                    <div class="card-body">
+                    <div class="card-body ps-md-0 h-100">
                         <h5 class="card-title">${film.title} 
                             ${getCertification(film)}
                             <em class="film-info-year"> (${date.getFullYear()})</em>
@@ -90,7 +91,9 @@ export const showFilm = (film) => {
                                 <p class="card-text">${getStarRating(film)}</p>
                                 <p class="card-text"><small class="text-muted">${film.location}</small>
                         </p>
-                        <button id="film-search-add-btn" class="btn btn-sm film-search-add-btn float-end mb-2 ml-8">Add film to watchlist</button>
+                        <div class="align-self-end clearfix">
+                            <button id="film-search-add-btn" class="btn btn-sm film-search-add-btn float-end mb-2 ml-8">Add film to watchlist</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -216,7 +219,6 @@ const getLocationList = (film) => {
 
 const getCertification = (film) => {
     const cert = film.certification;
-    console.log(cert);
 
     switch(cert){
         case undefined || "":
