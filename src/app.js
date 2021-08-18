@@ -107,7 +107,18 @@ const consolidateFilmDetails = async (film) => {
     return film;
 }
 
-const showFilm = film => {
+const showFilm = async film => {
+    // Check if film is in cinemas
+    if(film.location === "*Unavailable for streaming*"){
+        await API.getCinemaFilms()
+                .then(films => {
+                    const inCinema = films.results.some(cinemaFilm => cinemaFilm.title === film.title);
+                    if(inCinema){
+                        film.location = "Cinema";
+                    }
+                })
+    }
+
     // show film in UI
     UI.showFilm(film);
 
