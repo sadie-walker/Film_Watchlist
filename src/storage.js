@@ -38,7 +38,7 @@ export const watchlistCheckDuplicate = newFilm => {
     let watchlist = getWatchlistFromLocalStorage();
 
     const dupe =  watchlist.some(film => {
-        return film.title === newFilm.title && film.release_date === newFilm.release_date;
+        return film.title === newFilm.title && new Date(film.release_date).getFullYear() === new Date(newFilm.release_date).getFullYear();
     })
     return dupe;
 }
